@@ -900,7 +900,7 @@ function HistoryView({
                       borderRadius: '8px',
                       border: '1px solid var(--line)',
                       flexShrink: 0,
-                      background: '#f4f6f1'
+                      background: 'var(--paper)'
                     }}
                   />
                 )}
@@ -924,9 +924,9 @@ function HistoryView({
                           alignItems: 'center',
                           gap: '4px',
                           padding: '4px 8px',
-                          background: '#fff0e9',
-                          color: '#a34e2c',
-                          border: '1px solid #f0d5c8',
+                          background: 'rgba(221, 116, 65, 0.15)',
+                          color: 'var(--orange)',
+                          border: '1px solid rgba(221, 116, 65, 0.3)',
                           borderRadius: '6px',
                           fontSize: '12px',
                           cursor: 'pointer'
@@ -1107,13 +1107,13 @@ function SettingsView({ session, records, logout }: { session: Session; records:
             <h3>Profile & Account</h3>
             <label>Full name<input value={session.name} readOnly /></label>
             <label>Email address<input value={session.email} readOnly /></label>
-            <div style={{ marginTop: '15px', padding: '12px', background: '#f5f8f3', borderRadius: '7px', fontSize: '13px', color: 'var(--ink)' }}>
+            <div style={{ marginTop: '15px', padding: '12px', background: 'var(--paper)', borderRadius: '7px', fontSize: '13px', color: 'var(--ink)', border: '1px solid var(--line)' }}>
               <strong>Saved Records:</strong> {records.length} scan {records.length === 1 ? 'report' : 'reports'} saved for this account.
             </div>
             <button 
               type="button" 
               onClick={logout} 
-              style={{ marginTop: '16px', display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', background: '#fff0e9', color: '#a34e2c', border: '1px solid #e5bca9', borderRadius: '7px', cursor: 'pointer', fontWeight: 700, fontSize: '13px' }}
+              style={{ marginTop: '16px', display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', background: 'rgba(221, 116, 65, 0.15)', color: 'var(--orange)', border: '1px solid rgba(221, 116, 65, 0.3)', borderRadius: '7px', cursor: 'pointer', fontWeight: 700, fontSize: '13px' }}
             >
               <LogOut size={16} /> Sign Out / Switch Account
             </button>
@@ -1130,7 +1130,7 @@ function SettingsView({ session, records, logout }: { session: Session; records:
                 <FileText size={17} /> Download All Scan History (PDF)
               </button>
               <select 
-                style={{ width: '100%', padding: '12px', borderRadius: '7px', border: '1px solid var(--line)', background: '#f7f9f5' }} 
+                style={{ width: '100%', padding: '12px', borderRadius: '7px', border: '1px solid var(--line)', background: 'var(--paper)', color: 'var(--ink)' }} 
                 onChange={(e) => { if (e.target.value) { setPrintMode(e.target.value); e.target.value = ''; } }} 
                 defaultValue=""
               >
