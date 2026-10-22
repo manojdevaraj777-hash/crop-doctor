@@ -296,7 +296,7 @@ app.post('/api/diagnose', upload.single('image'), async (request, response) => {
 })
 
 app.post('/api/chat', async (request, response) => {
-  const { message, crop = 'Tomato', diagnosis = null } = request.body || {}
+  const { message, crop = 'plant', diagnosis = null, history = [] } = request.body || {}
   if (!message || typeof message !== 'string') return response.status(400).json({ error: 'Please enter a question.' })
   if (!process.env.GROQ_API_KEY) return response.status(503).json({ error: 'The assistant is unavailable until GROQ_API_KEY is configured on the server.' })
   try {
@@ -305,14 +305,45 @@ app.post('/api/chat', async (request, response) => {
       const { imageUrl, ...rest } = diagnosis;
       cleanDiagnosis = rest;
     }
-    const scanContext = cleanDiagnosis ? JSON.stringify(cleanDiagnosis) : 'None';
-    const prompt = `You are LeafLens, a careful agricultural assistant for farmers. Answer concisely in plain, very simple language. Avoid scientific jargon. Crop: ${crop}. Current scan: ${scanContext}. Farmer question: ${message}. Give practical, safety-conscious advice. Never invent certainty, never provide pesticide dosage beyond what the product label says, and recommend a local expert for severe problems.`
+
+    let scanContext = 'No plant scan analyzed yet.';
+    if (cleanDiagnosis && cleanDiagnosis.disease) {
+      scanContext = `Current Plant Diagnosis:
+- Crop: ${cleanDiagnosis.crop || crop}
+- Disease / Condition: ${cleanDiagnosis.disease} (Accuracy: ${cleanDiagnosis.confidence || 0}%, Risk: ${cleanDiagnosis.severity || 'Moderate'}, Treatable: ${cleanDiagnosis.treatable !== false ? 'Yes' : 'Difficult'})
+- Summary: ${cleanDiagnosis.summary || 'N/A'}
+- Recommended Steps: ${(cleanDiagnosis.treatmentSteps || cleanDiagnosis.actions || []).join('; ') || 'N/A'}
+- Organic / Natural Solutions: ${(cleanDiagnosis.organic || []).join('; ') || 'N/A'}
+- Medicines / Products: ${(cleanDiagnosis.medicines || []).join('; ') || 'N/A'}`;
+    }
+
+    const systemPrompt = `You are Crop Doctor Field Assistant, a knowledgeable, friendly, and natural conversational AI agronomist and farming companion (like ChatGPT for farmers).
+
+Context Information:
+- Current Crop/Field: ${crop || 'Crop farm'}
+- ${scanContext}
+
+Conversation Guidelines:
+1. Act like a true conversational AI: be warm, human-like, helpful, and natural. Do NOT output a robotic boilerplate list on every prompt.
+2. If the user greets you (e.g. "hi", "hello", "good morning"), reply with a warm, natural greeting, introduce yourself briefly as the Crop Doctor Field Assistant, and ask how you can help them with their plants or farm today. Do NOT dump an unprompted diagnostic report for a simple greeting!
+3. If the user asks a specific question (e.g. "what is this disease?", "can I use neem oil?", "how much should I water?"), answer that exact question directly with practical, farmer-friendly advice.
+4. If the user types gibberish, typos, or unclear messages (e.g. "vbn", "asdf"), politely ask them to clarify what plant or issue they need help with.
+5. Remember earlier messages in this conversation and provide smooth, coherent follow-up answers.
+6. Keep recommendations safe, practical, and grounded in good agricultural practices.`;
+
+    const messages = [
+      { role: 'system', content: systemPrompt },
+      ...(Array.isArray(history) ? history.slice(-8).map(m => ({
+        role: m.role === 'assistant' ? 'assistant' : 'user',
+        content: String(m.text || m.content || '')
+      })) : []),
+      { role: 'user', content: message }
+    ];
+
     const groqResponse = await requestGroq(
       process.env.GROQ_CHAT_MODEL || DEFAULT_CHAT_MODEL,
-      [
-        { role: 'system', content: prompt },
-        { role: 'user', content: message }
-      ]
+      messages,
+      { temperature: 0.7 }
     )
 
     if (!groqResponse.ok) {

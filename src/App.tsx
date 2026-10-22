@@ -415,7 +415,8 @@ function App() {
         body: JSON.stringify({ 
           message, 
           crop: activeContext?.crop || 'unknown crop', 
-          diagnosis: contextSummary 
+          diagnosis: contextSummary,
+          history: chatMessages.slice(-8)
         }) 
       })
       const data = await response.json().catch(() => ({})); if (!response.ok) throw new Error(data.error || 'Chat service unavailable.')
