@@ -11,7 +11,8 @@ type Page = 'overview' | 'scan' | 'history' | 'treatments' | 'settings'
 
 function getSession(): Session | null {
   try {
-    const session = JSON.parse(localStorage.getItem('cropdoctor-session') || 'null') as Session | null
+    // Uses sessionStorage so closing the tab or signing out requires logging in again
+    const session = JSON.parse(sessionStorage.getItem('cropdoctor-session') || 'null') as Session | null
     return session?.name && session?.email ? session : null
   } catch { return null }
 }
@@ -294,15 +295,23 @@ function App() {
     if (cameraInputRef.current) cameraInputRef.current.value = ''
   }
 
+  useEffect(() => {
+    // Clear any legacy localStorage session so closing tab requires signing in
+    localStorage.removeItem('cropdoctor-session')
+  }, [])
+
   const logout = () => {
     resetAllSessionData()
+    sessionStorage.removeItem('cropdoctor-session')
     localStorage.removeItem('cropdoctor-session')
     setSession(null)
+    window.location.hash = ''
   }
 
   const handleLogin = (newSession: Session) => {
     resetAllSessionData()
-    localStorage.setItem('cropdoctor-session', JSON.stringify(newSession))
+    sessionStorage.setItem('cropdoctor-session', JSON.stringify(newSession))
+    localStorage.removeItem('cropdoctor-session')
     setSession(newSession)
   }
 
