@@ -1118,23 +1118,26 @@ footer i {
   position: fixed;
   right: 25px;
   bottom: 70px;
-  z-index: 6;
-  width: 330px;
-  height: 430px;
+  z-index: 99;
+  width: 350px;
+  height: 470px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-radius: 12px;
-  background: white;
-  box-shadow: 0 15px 40px rgba(20, 37, 30, .22);
+  border-radius: 14px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: 0 16px 45px rgba(20, 37, 30, .24);
 }
 
 .chat-header {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  padding: 15px;
+  padding: 13px 16px;
   color: white;
   background: var(--deep);
+  flex-shrink: 0;
 }
 
 .chat-header strong,
@@ -1144,40 +1147,113 @@ footer i {
 
 .chat-header strong {
   font-size: 14px;
+  font-weight: 700;
 }
 
 .chat-header span {
-  margin-top: 3px;
+  margin-top: 2px;
   color: #b8d3bd;
-  font: 7px 'DM Mono', monospace;
+  font-size: 11px;
 }
 
-.chat-header button {
-  border: 0;
+.chat-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chat-clear-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  color: #fff;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+
+.chat-clear-btn:hover {
+  background: #c2410c;
+  border-color: #ea580c;
+}
+
+.chat-close-btn {
+  display: grid;
+  place-items: center;
+  padding: 4px;
+  border-radius: 6px;
   color: white;
   background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+
+.chat-close-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
 }
 
 .chat-messages {
   flex: 1;
   padding: 14px;
   overflow-y: auto;
-  background: #f4f7f1;
+  background: var(--paper);
+  scroll-behavior: smooth;
+}
+
+.chat-empty {
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+  margin: 10px 0;
+}
+
+.chat-quick-prompts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.chat-quick-prompts button {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 12px;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.chat-quick-prompts button:hover {
+  border-color: var(--green);
+  color: var(--green);
+  background: rgba(46, 105, 75, 0.06);
 }
 
 .chat-message {
   max-width: 88%;
-  padding: 9px 10px;
-  margin-bottom: 9px;
-  border-radius: 8px;
-  font-size: 12px;
-  line-height: 1.5;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .chat-message.assistant {
   color: var(--ink);
   border: 1px solid var(--line);
-  background: white;
+  background: var(--card);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .chat-message.user {
@@ -1189,32 +1265,39 @@ footer i {
 .chat-form {
   display: flex;
   gap: 7px;
-  padding: 10px;
+  padding: 10px 12px;
   border-top: 1px solid var(--line);
+  background: var(--card);
+  flex-shrink: 0;
 }
 
 .chat-form input {
   flex: 1;
   min-width: 0;
-  padding: 9px;
+  padding: 9px 12px;
   border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: 8px;
   outline: 0;
-  font-size: 12px;
+  font-size: 13px;
+  background: var(--card);
+  color: var(--ink);
 }
 
 .chat-form button {
   display: grid;
   place-items: center;
-  width: 33px;
+  width: 36px;
   border: 0;
-  border-radius: 6px;
+  border-radius: 8px;
   color: white;
   background: var(--green);
+  cursor: pointer;
+  transition: opacity 0.15s;
 }
 
 .chat-form button:disabled {
   opacity: .45;
+  cursor: not-allowed;
 }
 
 .chat-disclaimer {
@@ -1222,9 +1305,11 @@ footer i {
   align-items: center;
   gap: 4px;
   margin: 0;
-  padding: 0 11px 10px;
-  color: #99a59c;
+  padding: 0 12px 10px;
+  color: var(--muted);
   font-size: 10px;
+  background: var(--card);
+  flex-shrink: 0;
 }
 
 .spin {

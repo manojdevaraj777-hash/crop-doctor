@@ -300,7 +300,13 @@ app.post('/api/chat', async (request, response) => {
   if (!message || typeof message !== 'string') return response.status(400).json({ error: 'Please enter a question.' })
   if (!process.env.GROQ_API_KEY) return response.status(503).json({ error: 'The assistant is unavailable until GROQ_API_KEY is configured on the server.' })
   try {
-    const prompt = `You are LeafLens, a careful agricultural assistant for farmers. Answer concisely in plain, very simple language. Avoid scientific jargon. Crop: ${crop}. Current scan: ${JSON.stringify(diagnosis)}. Farmer question: ${message}. Give practical, safety-conscious advice. Never invent certainty, never provide pesticide dosage beyond what the product label says, and recommend a local expert for severe problems.`
+    let cleanDiagnosis = null;
+    if (diagnosis && typeof diagnosis === 'object') {
+      const { imageUrl, ...rest } = diagnosis;
+      cleanDiagnosis = rest;
+    }
+    const scanContext = cleanDiagnosis ? JSON.stringify(cleanDiagnosis) : 'None';
+    const prompt = `You are LeafLens, a careful agricultural assistant for farmers. Answer concisely in plain, very simple language. Avoid scientific jargon. Crop: ${crop}. Current scan: ${scanContext}. Farmer question: ${message}. Give practical, safety-conscious advice. Never invent certainty, never provide pesticide dosage beyond what the product label says, and recommend a local expert for severe problems.`
     const groqResponse = await requestGroq(
       process.env.GROQ_CHAT_MODEL || DEFAULT_CHAT_MODEL,
       [

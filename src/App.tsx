@@ -269,6 +269,13 @@ function App() {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
   const uploadInputRef = useRef<HTMLInputElement>(null)
   const cameraInputRef = useRef<HTMLInputElement>(null)
+  const chatBottomRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (chatOpen) {
+      chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [chatMessages, chatLoading, chatOpen])
 
   const resetAllSessionData = () => {
     if (imageUrl) URL.revokeObjectURL(imageUrl)
@@ -391,13 +398,24 @@ function App() {
     setChatInput(''); setChatMessages((current) => [...current, { role: 'user', text: message }]); setChatLoading(true)
     try {
       const activeContext = diagnosis || selectedRecord || records[0];
+      const contextSummary = activeContext ? {
+        crop: activeContext.crop,
+        disease: activeContext.disease,
+        confidence: activeContext.confidence,
+        severity: activeContext.severity,
+        summary: activeContext.summary,
+        actions: activeContext.actions,
+        treatmentSteps: activeContext.treatmentSteps,
+        organic: activeContext.organic,
+        medicines: activeContext.medicines,
+      } : null;
       const response = await fetch('/api/chat', { 
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
         body: JSON.stringify({ 
           message, 
           crop: activeContext?.crop || 'unknown crop', 
-          diagnosis: activeContext || null 
+          diagnosis: contextSummary 
         }) 
       })
       const data = await response.json().catch(() => ({})); if (!response.ok) throw new Error(data.error || 'Chat service unavailable.')
@@ -458,7 +476,97 @@ function App() {
         {page === 'settings' && <SettingsView session={session} records={records} logout={logout} />}
       </div>
     </main>
-    {chatOpen && <section className="chat-panel" aria-label="Crop doctor assistant"><div className="chat-header"><div><strong>Field assistant</strong><span>AI support for your current scan</span></div><button onClick={() => setChatOpen(false)} aria-label="Close chat"><X size={16} /></button></div><div className="chat-messages">{chatMessages.length === 0 && <p className="chat-empty">Ask a question about your crop.</p>}{chatMessages.map((message, index) => <div className={`chat-message ${message.role}`} key={`${message.role}-${index}`}>{message.text}</div>)}{chatLoading && <div className="chat-message assistant"><LoaderCircle className="spin" size={14} /> Thinking...</div>}</div><form className="chat-form" onSubmit={(event) => { event.preventDefault(); void sendChat() }}><input value={chatInput} onChange={(event) => setChatInput(event.target.value)} placeholder="Ask about your crop..." aria-label="Ask the crop assistant" /><button type="submit" disabled={chatLoading || !chatInput.trim()}><Send size={15} /></button></form><p className="chat-disclaimer"><ShieldCheck size={12} /> Confirm urgent decisions with an agronomist.</p></section>}
+    {chatOpen && (
+      <section className="chat-panel" aria-label="Crop doctor assistant">
+        <div className="chat-header">
+          <div>
+            <strong>Field assistant</strong>
+            <span>AI support for your current scan</span>
+          </div>
+          <div className="chat-header-actions">
+            {chatMessages.length > 0 && (
+              <button
+                type="button"
+                className="chat-clear-btn"
+                onClick={() => {
+                  if (window.confirm('Delete all messages in this chat?')) {
+                    setChatMessages([])
+                  }
+                }}
+                title="Delete chat history"
+              >
+                <Trash2 size={13} /> Clear
+              </button>
+            )}
+            <button
+              onClick={() => setChatOpen(false)}
+              aria-label="Close chat"
+              className="chat-close-btn"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        </div>
+        <div className="chat-messages">
+          {chatMessages.length === 0 && (
+            <div className="chat-empty">
+              <p>Ask a question about your crop, disease prevention, or treatment recipes.</p>
+              <div className="chat-quick-prompts">
+                <button
+                  type="button"
+                  onClick={() => setChatInput('How do I prevent this problem from spreading?')}
+                >
+                  💡 How do I stop it from spreading?
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setChatInput('What organic spray can I prepare at home?')}
+                >
+                  🌿 What natural spray can I make at home?
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setChatInput('How often should I water during recovery?')}
+                >
+                  💧 How much watering is safe now?
+                </button>
+              </div>
+            </div>
+          )}
+          {chatMessages.map((message, index) => (
+            <div className={`chat-message ${message.role}`} key={`${message.role}-${index}`}>
+              {message.text}
+            </div>
+          ))}
+          {chatLoading && (
+            <div className="chat-message assistant">
+              <LoaderCircle className="spin" size={14} /> Thinking...
+            </div>
+          )}
+          <div ref={chatBottomRef} />
+        </div>
+        <form
+          className="chat-form"
+          onSubmit={(event) => {
+            event.preventDefault()
+            void sendChat()
+          }}
+        >
+          <input
+            value={chatInput}
+            onChange={(event) => setChatInput(event.target.value)}
+            placeholder="Ask about your crop..."
+            aria-label="Ask the crop assistant"
+          />
+          <button type="submit" disabled={chatLoading || !chatInput.trim()}>
+            <Send size={15} />
+          </button>
+        </form>
+        <p className="chat-disclaimer">
+          <ShieldCheck size={12} /> Confirm urgent decisions with an agronomist.
+        </p>
+      </section>
+    )}
     {page === 'scan' && file && <button className="remove-image" type="button" onClick={() => window.dispatchEvent(new Event('cropdoctor:remove-image'))}><X size={14} /> Remove image</button>}<button className="chat-launcher" onClick={() => setChatOpen(!chatOpen)}><MessageCircle size={18} /> Field assistant</button></div>
 }
 
