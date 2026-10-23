@@ -521,26 +521,6 @@ function App() {
           {chatMessages.length === 0 && (
             <div className="chat-empty">
               <p>Ask a question about your crop, disease prevention, or treatment recipes.</p>
-              <div className="chat-quick-prompts">
-                <button
-                  type="button"
-                  onClick={() => setChatInput('How do I prevent this problem from spreading?')}
-                >
-                  💡 How do I stop it from spreading?
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setChatInput('What organic spray can I prepare at home?')}
-                >
-                  🌿 What natural spray can I make at home?
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setChatInput('How often should I water during recovery?')}
-                >
-                  💧 How much watering is safe now?
-                </button>
-              </div>
             </div>
           )}
           {chatMessages.map((message, index) => (
