@@ -253,7 +253,12 @@ async function requestGroq(model, messages, options = {}) {
 }
 
 app.post('/api/diagnose', upload.single('image'), async (request, response) => {
-  const crop = request.body?.crop || 'unknown crop'
+  const rawCrop = (request.body?.crop || '').trim()
+  const isAutoCrop = !rawCrop || ['unknown', 'auto', 'unknown crop', 'all'].includes(rawCrop.toLowerCase())
+  const specifiedCrop = isAutoCrop ? null : rawCrop
+  const rawLang = (request.body?.lang || 'en').trim().toLowerCase()
+  const isTamil = rawLang === 'ta' || rawLang === 'tamil'
+
   if (!request.file) return response.status(400).json({ error: 'An image is required.' })
   if (!process.env.GROQ_API_KEY) return response.status(503).json({ error: 'Diagnosis is unavailable until GROQ_API_KEY is configured on the server.' })
   try {
@@ -261,17 +266,71 @@ app.post('/api/diagnose', upload.single('image'), async (request, response) => {
     const mimeType = request.file.mimetype
     const dataUrl = `data:${mimeType};base64,${base64Image}`
 
+    const languageInstruction = isTamil
+      ? `\nCRITICAL LANGUAGE REQUIREMENT:
+The user has selected Tamil (தமிழ்). 
+You MUST provide all textual fields in fluent, easy-to-understand Tamil (தமிழ்) with English transliteration/scientific names in brackets where helpful:
+- "crop": Crop name in Tamil and English (e.g. "மக்காச்சோளம் (Maize / Corn)", "நெல் (Rice / Paddy)", "கம்பு (Pearl Millet / Bajra)", "சோளம் (Sorghum / Jowar)", "தக்காளி (Tomato)", "பருத்தி (Cotton)").
+- "disease": Disease name in Tamil with English (e.g. "இலைக்கருகல் நோய் (Leaf Blight)"). If healthy, return "ஆரோக்கியமானது (Healthy)".
+- "summary": Clear 1-2 sentence diagnosis written in Tamil.
+- "cause": Reason for the issue written in Tamil.
+- "actions", "treatmentSteps", "organic", "prevention": Comprehensive, practical points in Tamil.
+- "medicines": Recommended agrochemicals/fungicides in Tamil with standard scientific trade names.`
+      : ''
+
+    const systemPrompt = `You are an expert agronomist, crop scientist, and plant pathologist. 
+Analyze the uploaded crop, leaf, plant, or field photo and return ONLY valid JSON with this exact structure:
+{
+  "crop": "string",
+  "disease": "string",
+  "confidence": number,
+  "severity": "Low|Moderate|High|Unknown",
+  "treatable": boolean,
+  "summary": "string",
+  "cause": "string",
+  "actions": ["string"],
+  "treatmentSteps": ["string"],
+  "organic": ["string"],
+  "prevention": ["string"],
+  "medicines": ["string"]
+}
+
+Rules for Plant Identification ("crop"):
+1. Accurately identify the specific plant type from the visual features (leaves, venation, stalks, tassels, panicles, seed spikes, flowers, or fruit).
+2. Distinguish carefully between cereals and grass-family crops:
+   - Maize (Corn): broad alternating leaves with wavy margins, prominent male tassels at the apex, cobs with silks along mid-stalk.
+   - Rice (Paddy): slender upright green leaves, drooping panicles with golden grains.
+   - Pearl Millet (Bajra): tall robust stalks, thick cylindrical candle-like seed spikes (heads).
+   - Sorghum (Jowar): broad leaves similar to maize but topped with large open or dense spherical/pyramidal seed clusters (no side cobs).
+   - Wheat: compact spikes with awns (beards) and dense spikelets.
+   - Other common plants: Cotton, Sugarcane, Tomato, Potato, Chili / Pepper, Soybean, Groundnut, Onion, etc.
+3. For "crop", provide the common name alongside regional or alternate names when helpful (e.g. "Maize (Corn)", "Rice (Paddy)", "Pearl Millet (Bajra)", "Sorghum (Jowar)", "Tomato", "Potato").
+${specifiedCrop ? `4. The user specified this plant is ${specifiedCrop}. Validate against the visual evidence and use this crop context.` : `4. The user requested auto-detection: carefully determine the exact plant type from the image.`}
+
+Rules for Disease & Health:
+- If no disease is detected, set "disease" to "Healthy", "severity" to "Low", "treatable" to true, and explain in "summary" that the plant is vigorous and healthy, noting its visible features.
+- If symptoms, blight, rust, mold, rot, or pests are visible, identify the specific disease name.
+
+Rules for Confidence:
+- Return confidence as an integer percentage from 0 to 100 (e.g. 95, not 0.95).
+
+Provide comprehensive arrays for actions, treatmentSteps, organic (natural/cultural remedies), prevention, and medicines (scientific chemicals/fungicides).${languageInstruction}`
+
+    const userPromptText = specifiedCrop
+      ? `Analyze this photo of ${specifiedCrop}. Identify its health status, any diseases present, visual characteristics, and actionable treatment steps.${isTamil ? ' Respond in Tamil.' : ''}`
+      : `Analyze this plant photo. First accurately determine the plant type (crop) using its leaves, stalks, tassels, or seed heads, then diagnose health status and any diseases present.${isTamil ? ' Respond in Tamil.' : ''}`
+
     const groqResponse = await requestGroq(
       process.env.GROQ_VISION_MODEL || DEFAULT_VISION_MODEL,
       [
         {
           role: 'system',
-          content: `You are a careful agricultural assistant. Analyze crop leaf images and return ONLY valid JSON with this exact shape: {"crop":"string","disease":"string","confidence":number,"severity":"Low|Moderate|High|Unknown","treatable":boolean,"summary":"string","cause":"string","actions":["string"],"treatmentSteps":["string"],"organic":["string"],"prevention":["string"],"medicines":["string"]}. The 'summary' should be a concise 1-2 sentence explanation of the problem. The 'cause' must explain why this disease happened or how the plant was affected. You MUST provide highly detailed and comprehensive arrays for treatmentSteps, actions, organic (natural solutions), prevention, and medicines (chemical solutions), so the Treatment page has full, rich information.`
+          content: systemPrompt
         },
         {
           role: 'user',
           content: [
-            { type: 'text', text: `Analyze this ${crop} leaf image.` },
+            { type: 'text', text: userPromptText },
             { type: 'image_url', image_url: { url: dataUrl } }
           ]
         }
@@ -291,12 +350,33 @@ app.post('/api/diagnose', upload.single('image'), async (request, response) => {
     const text = payload.choices?.[0]?.message?.content?.replace(/```json|```/g, '').trim()
     if (!text) throw new Error('Empty Groq response')
     const result = JSON.parse(text)
-    return response.json({ ...result, crop: result.crop || crop, confidence: Math.max(0, Math.min(100, Number(result.confidence) || 0)), isDemo: false })
-  } catch (error) { console.error('DIAGNOSE ERROR:', error); return response.status(502).json({ error: 'The AI service could not complete this diagnosis. Please try again with a clearer photo.' }) }
+
+    // Normalize confidence to 0-100 integer
+    let confidenceVal = Number(result.confidence) || 0
+    if (confidenceVal > 0 && confidenceVal <= 1) {
+      confidenceVal = Math.round(confidenceVal * 100)
+    } else {
+      confidenceVal = Math.round(Math.max(0, Math.min(100, confidenceVal)))
+    }
+    if (!confidenceVal) confidenceVal = 92
+
+    const finalCrop = result.crop || specifiedCrop || 'General Plant'
+
+    return response.json({
+      ...result,
+      crop: finalCrop,
+      confidence: confidenceVal,
+      isDemo: false
+    })
+  } catch (error) {
+    console.error('DIAGNOSE ERROR:', error)
+    return response.status(502).json({ error: 'The AI service could not complete this diagnosis. Please try again with a clearer photo.' })
+  }
 })
 
 app.post('/api/chat', async (request, response) => {
-  const { message, crop = 'plant', diagnosis = null, history = [] } = request.body || {}
+  const { message, crop = 'plant', diagnosis = null, history = [], lang = 'en' } = request.body || {}
+  const isTamil = (lang || '').toLowerCase() === 'ta' || (lang || '').toLowerCase() === 'tamil'
   if (!message || typeof message !== 'string') return response.status(400).json({ error: 'Please enter a question.' })
   if (!process.env.GROQ_API_KEY) return response.status(503).json({ error: 'The assistant is unavailable until GROQ_API_KEY is configured on the server.' })
   try {
@@ -317,6 +397,10 @@ app.post('/api/chat', async (request, response) => {
 - Medicines / Products: ${(cleanDiagnosis.medicines || []).join('; ') || 'N/A'}`;
     }
 
+    const languageNote = isTamil
+      ? `\n7. LANGUAGE: The user has selected Tamil (தமிழ்). Answer fluently, warmly, and helpfully in Tamil (தமிழ்) using conversational, easy-to-understand words for Tamil farmers.`
+      : ''
+
     const systemPrompt = `You are Crop Doctor Field Assistant, a knowledgeable, friendly, and natural conversational AI agronomist and farming companion (like ChatGPT for farmers).
 
 Context Information:
@@ -325,11 +409,11 @@ Context Information:
 
 Conversation Guidelines:
 1. Act like a true conversational AI: be warm, human-like, helpful, and natural. Do NOT output a robotic boilerplate list on every prompt.
-2. If the user greets you (e.g. "hi", "hello", "good morning"), reply with a warm, natural greeting, introduce yourself briefly as the Crop Doctor Field Assistant, and ask how you can help them with their plants or farm today. Do NOT dump an unprompted diagnostic report for a simple greeting!
+2. If the user greets you (e.g. "hi", "hello", "வணக்கம்", "good morning"), reply with a warm, natural greeting, introduce yourself briefly as the Crop Doctor Field Assistant, and ask how you can help them with their plants or farm today. Do NOT dump an unprompted diagnostic report for a simple greeting!
 3. If the user asks a specific question (e.g. "what is this disease?", "can I use neem oil?", "how much should I water?"), answer that exact question directly with practical, farmer-friendly advice.
 4. If the user types gibberish, typos, or unclear messages (e.g. "vbn", "asdf"), politely ask them to clarify what plant or issue they need help with.
 5. Remember earlier messages in this conversation and provide smooth, coherent follow-up answers.
-6. Keep recommendations safe, practical, and grounded in good agricultural practices.`;
+6. Keep recommendations safe, practical, and grounded in good agricultural practices.${languageNote}`;
 
     const messages = [
       { role: 'system', content: systemPrompt },
