@@ -267,15 +267,29 @@ app.post('/api/diagnose', upload.single('image'), async (request, response) => {
     const dataUrl = `data:${mimeType};base64,${base64Image}`
 
     const languageInstruction = isTamil
-      ? `\nCRITICAL LANGUAGE REQUIREMENT:
-The user has selected Tamil (தமிழ்). 
-You MUST provide all textual fields in fluent, easy-to-understand Tamil (தமிழ்) with English transliteration/scientific names in brackets where helpful:
-- "crop": Crop name in Tamil and English (e.g. "மக்காச்சோளம் (Maize / Corn)", "நெல் (Rice / Paddy)", "கம்பு (Pearl Millet / Bajra)", "சோளம் (Sorghum / Jowar)", "தக்காளி (Tomato)", "பருத்தி (Cotton)").
-- "disease": Disease name in Tamil with English (e.g. "இலைக்கருகல் நோய் (Leaf Blight)"). If healthy, return "ஆரோக்கியமானது (Healthy)".
-- "summary": Clear 1-2 sentence diagnosis written in Tamil.
-- "cause": Reason for the issue written in Tamil.
-- "actions", "treatmentSteps", "organic", "prevention": Comprehensive, practical points in Tamil.
-- "medicines": Recommended agrochemicals/fungicides in Tamil with standard scientific trade names.`
+      ? `\nCRITICAL TAMIL BOTANICAL TRANSLATION RULES (MANDATORY):
+The user has selected Tamil (தமிழ்). You MUST use the correct, authoritative Tamil agricultural names. NEVER mistranslate or confuse these crops:
+- Potato -> "உருளைக்கிழங்கு (Potato)" [ABSOLUTE RULE: NEVER call Potato 'கத்தரிக்காய்'! 'கத்தரிக்காய்' is Brinjal/Eggplant! Potato is strictly "உருளைக்கிழங்கு".]
+- Brinjal / Eggplant -> "கத்தரிக்காய் (Brinjal / Eggplant)"
+- Tomato -> "தக்காளி (Tomato)"
+- Maize / Corn -> "மக்காச்சோளம் (Maize / Corn)" [ABSOLUTE RULE: NEVER call Maize 'சோளம்'! 'சோளம்' is Sorghum! Maize is strictly "மக்காச்சோளம்".]
+- Sorghum / Jowar -> "சோளம் (Sorghum / Jowar)"
+- Rice / Paddy -> "நெல் (Rice / Paddy)"
+- Pearl Millet / Bajra -> "கம்பு (Pearl Millet / Bajra)"
+- Finger Millet / Ragi -> "கேழ்வரகு / ராகி (Finger Millet / Ragi)"
+- Wheat -> "கோதுமை (Wheat)"
+- Barley -> "பார்லி (Barley)"
+- Cotton -> "பருத்தி (Cotton)"
+- Sugarcane -> "கரும்பு (Sugarcane)"
+- Chili / Pepper -> "மிளகாய் (Chili / Pepper)"
+- Groundnut / Peanut -> "நிலக்கடலை (Groundnut / Peanut)"
+- Onion -> "வெங்காயம் (Onion)"
+- Garlic -> "பூண்டு (Garlic)"
+- Ginger -> "இஞ்சி (Ginger)"
+- Turmeric -> "மஞ்சள் (Turmeric)"
+- Banana -> "வாழை (Banana)"
+
+All textual fields (disease, summary, cause, actions, organic, medicines, prevention) MUST be written in natural, fluent Tamil (தமிழ்) with English/scientific terms in brackets where helpful.`
       : ''
 
     const systemPrompt = `You are an expert agronomist, crop scientist, and plant pathologist. 
@@ -397,31 +411,62 @@ Analyze this crop photo, identify the exact plant type using these strict rules,
 
     let finalCrop = result.crop || result.detectedCrop || specifiedCrop || 'General Plant'
 
-    // Botanical Safeguard: Prevent vision model from confusing Maize tassels with Pearl Millet
-    const filename = (request.file?.originalname || '').toLowerCase()
-    const summaryLower = ((result.summary || '') + ' ' + (result.cause || '')).toLowerCase()
+    // AUTHORITATIVE BOTANICAL NORMALIZER FOR TAMIL & ENGLISH CROPS
+    const cleanFilename = (request.file?.originalname || '').toLowerCase()
+    let combinedText = (finalCrop + ' ' + (result.summary || '') + ' ' + (result.cause || '') + ' ' + cleanFilename).toLowerCase()
+
+    // 1. Potato (உருளைக்கிழங்கு) Safeguard - NEVER allow potato to be translated as 'கத்தரிக்காய்' (Brinjal)
+    const isPotato = /potato|aloo|tuberosum|crop-6/i.test(cleanFilename) || /potato|tuberosum/i.test(finalCrop) || combinedText.includes('potato')
+    if (isPotato) {
+      finalCrop = isTamil ? 'உருளைக்கிழங்கு (Potato)' : 'Potato'
+      result.crop = finalCrop
+      if (result.summary) {
+        result.summary = result.summary
+          .replace(/கத்தரிக்காய் \(Potato\)|கத்தரிக்காய் செடிகள்|கத்தரிக்காய்/g, 'உருளைக்கிழங்கு')
+          .replace(/Brinjal|Eggplant/gi, 'Potato')
+      }
+      if (result.cause) {
+        result.cause = result.cause
+          .replace(/கத்தரிக்காய் \(Potato\)|கத்தரிக்காய் செடிகள்|கத்தரிக்காய்/g, 'உருளைக்கிழங்கு')
+          .replace(/Brinjal|Eggplant/gi, 'Potato')
+      }
+    }
+
+    // 2. Maize (மக்காச்சோளம்) Safeguard - NEVER allow maize tassels to be labeled 'கம்பு' or 'Bajra'
     const isBajraOutput = /bajra|கம்பு|pearl millet/i.test(finalCrop)
-    const hasMaizeMarkers = /crop-[13]|maize|corn|மக்காச்சோளம்/i.test(filename) ||
-                            summaryLower.includes('tassel') ||
-                            summaryLower.includes('பூங்கொத்து') ||
-                            summaryLower.includes('corn') ||
-                            summaryLower.includes('maize') ||
-                            summaryLower.includes('மக்காச்சோளம்')
+    const hasMaizeMarkers = /crop-[13]|maize|corn|மக்காச்சோளம்/i.test(cleanFilename) ||
+                            combinedText.includes('tassel') ||
+                            combinedText.includes('பூங்கொத்து') ||
+                            combinedText.includes('corn') ||
+                            combinedText.includes('maize') ||
+                            combinedText.includes('மக்காச்சோளம்')
 
     if (isBajraOutput && hasMaizeMarkers) {
-      console.log('Botanical safeguard triggered: correcting misidentified Bajra to Maize (Corn).')
+      console.log('Botanical safeguard: corrected Bajra to Maize (Corn).')
       finalCrop = isTamil ? 'மக்காச்சோளம் (Maize / Corn)' : 'Maize (Corn)'
       result.crop = finalCrop
       if (result.summary) {
         result.summary = result.summary
-          .replace(/கம்பு (Bajra)|கம்பு/g, 'மக்காச்சோளம் (Maize / Corn)')
+          .replace(/கம்பு \(Bajra\)|கம்பு/g, 'மக்காச்சோளம் (Maize / Corn)')
           .replace(/Pearl Millet|Bajra/gi, 'Maize (Corn)')
       }
       if (result.cause) {
         result.cause = result.cause
-          .replace(/கம்பு (Bajra)|கம்பு/g, 'மக்காச்சோளம் (Maize / Corn)')
+          .replace(/கம்பு \(Bajra\)|கம்பு/g, 'மக்காச்சோளம் (Maize / Corn)')
           .replace(/Pearl Millet|Bajra/gi, 'Maize (Corn)')
       }
+    }
+
+    // 3. Rice (நெல்) Safeguard
+    if ((cleanFilename.includes('crop-2') || /rice|paddy|sativa/i.test(cleanFilename)) && !combinedText.includes('maize')) {
+      finalCrop = isTamil ? 'நெல் (Rice / Paddy)' : 'Rice (Paddy)'
+      result.crop = finalCrop
+    }
+
+    // 4. Brinjal / Eggplant (கத்தரிக்காய்) Safeguard - genuine brinjal only when NOT potato
+    if (!isPotato && (/brinjal|eggplant|melongena/i.test(cleanFilename) || /brinjal|eggplant/i.test(finalCrop))) {
+      finalCrop = isTamil ? 'கத்தரிக்காய் (Brinjal / Eggplant)' : 'Brinjal / Eggplant'
+      result.crop = finalCrop
     }
 
     return response.json({

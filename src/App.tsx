@@ -968,11 +968,23 @@ const SUPPORTED_PLANTS: PlantInfo[] = [
     category: 'Vegetable / Tuber',
     categoryTa: 'கிழங்கு பயிர்',
     icon: '🥔',
-    regionalNames: 'Aloo, Batata / உருளைக்கிழங்கு',
+    regionalNames: 'Aloo, Batata / உருளைக்கிழங்கு (NOT கத்தரிக்காய்)',
     identifiers: ['Compound pinnate leaves with large terminal leaflet', 'White, pink, or violet 5-lobed flowers', 'Fleshy underground tubers with eye buds'],
-    identifiersTa: ['பெரிய முனை சிற்றிலை கொண்ட சிறகு வடிவ கூட்டிலைகள்', 'வெள்ளை அல்லது இளஞ்சிவப்பு நிற 5 இதழ் பூக்கள்', 'மண்ணுக்கு அடியில் விளையும் மாவுச்சத்து கிழங்குகள்'],
+    identifiersTa: ['பெரிய முனை சிற்றிலை கொண்ட சிறகு வடிவ கூட்டிலைகள்', 'வெள்ளை அல்லது இளஞ்சிவப்பு நிற 5 இதழ் பூக்கள்', 'மண்ணுக்கு அடியில் விளையும் மாவுச்சத்து உருளைக்கிழங்குகள்'],
     commonDiseases: ['Late Blight (Phytophthora)', 'Early Blight', 'Blackleg', 'Common Scab'],
     commonDiseasesTa: ['பின் பருவ கருகல் நோய்', 'முன் பருவ கருகல் நோய்', 'கருந்தண்டு அழுகல்', 'சொறி நோய் (Scab)']
+  },
+  {
+    name: 'Brinjal (Eggplant)',
+    nameTa: 'கத்தரிக்காய் (Brinjal / Eggplant)',
+    category: 'Vegetable',
+    categoryTa: 'காய்கறிப் பயிர்',
+    icon: '🍆',
+    regionalNames: 'Baingan, Katharikkai / கத்தரிக்காய்',
+    identifiers: ['Large, coarse, fuzzy lobed leaves sometimes with small spines', 'Violet or purple star-shaped flowers with bright yellow centers', 'Glossy purple, green, or white fleshy fruit with green calyx cap'],
+    identifiersTa: ['முட்கள் கொண்ட அகன்ற சொரசொரப்பான மடலிலை அமைப்பு', 'மஞ்சள் மையத்துடன் கூடிய ஊதா நிற நட்சத்திர மலர்கள்', 'பளபளப்பான ஊதா அல்லது பச்சை நிற சதைப்பற்றுள்ள காய்கள்'],
+    commonDiseases: ['Phomopsis Blight (Fruit Rot)', 'Bacterial Wilt', 'Little Leaf Disease', 'Cercospora Leaf Spot'],
+    commonDiseasesTa: ['பழ அழுகல் (Phomopsis)', 'பாக்டீரியா வாடல் நோய்', 'சிற்றிலை நோய் (Little Leaf)', 'செர்கோஸ்போரா இலைப்புள்ளி']
   },
   {
     name: 'Cotton',
@@ -1173,7 +1185,7 @@ function ScanView({
               <span className="crop-mini-pill">🌾 {lang === 'ta' ? 'சோளம்' : 'Sorghum'}</span>
               <span className="crop-mini-pill">🌾 {lang === 'ta' ? 'கோதுமை' : 'Wheat'}</span>
               <span className="crop-mini-pill">🍅 {lang === 'ta' ? 'தக்காளி' : 'Tomato'}</span>
-              <span className="crop-mini-pill">🥔 {lang === 'ta' ? 'உருளை' : 'Potato'}</span>
+              <span className="crop-mini-pill">🥔 {lang === 'ta' ? 'உருளைக்கிழங்கு' : 'Potato'}</span>
               <span className="crop-mini-pill">🌶️ {lang === 'ta' ? 'மிளகாய்' : 'Chili'}</span>
               <span className="crop-mini-pill">🌿 {lang === 'ta' ? 'பருத்தி' : 'Cotton'}</span>
               <span className="crop-mini-pill">🎋 {lang === 'ta' ? 'கரும்பு' : 'Sugarcane'}</span>
