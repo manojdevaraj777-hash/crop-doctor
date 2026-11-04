@@ -2254,26 +2254,26 @@ function CrmAnalyticsView({ records, navigate, t, lang, onOpenChat }: CrmAnalyti
   const [hoveredSlice, setHoveredSlice] = useState<string | null>(null);
   const [hoveredTrendPoint, setHoveredTrendPoint] = useState<{ label: string; healthy: number; sick: number } | null>(null);
 
-  // Calculate dynamic metrics from records or synthesize benchmark baseline
+  // Calculate dynamic metrics from records
   const hasUserRecords = records.length > 0;
-  const count = hasUserRecords ? records.length : 128;
+  const count = records.length;
   const healthyCount = hasUserRecords 
     ? records.filter(r => (r.disease || '').toLowerCase().includes('healthy') || (r.disease || '').toLowerCase().includes('ஆரோக்கிய') || (r.severity || '').toLowerCase() === 'low').length
-    : 108;
+    : 0;
   const sickCount = count - healthyCount;
-  const vitalityRate = count > 0 ? Math.round((healthyCount / count) * 100) : 84;
-  const pathogenRate = count > 0 ? Math.round((sickCount / count) * 100) : 16;
+  const vitalityRate = count > 0 ? Math.round((healthyCount / count) * 100) : 0;
+  const pathogenRate = count > 0 ? Math.round((sickCount / count) * 100) : 0;
   const treatableCount = hasUserRecords
     ? records.filter(r => r.treatable !== false).length
-    : 119;
-  const recoveryRate = count > 0 ? Math.round((treatableCount / count) * 100) : 93;
+    : 0;
+  const recoveryRate = count > 0 ? Math.round((treatableCount / count) * 100) : 0;
   const avgAccuracy = hasUserRecords && records.length > 0
     ? Math.round(records.reduce((acc, r) => acc + (r.confidence || 95), 0) / records.length)
-    : 96;
+    : 0;
   const severeCount = hasUserRecords
     ? records.filter(r => (r.severity || '').toLowerCase() === 'high' || r.treatable === false).length
-    : 4;
-  const severeRate = count > 0 ? Math.round((severeCount / count) * 100) : 3;
+    : 0;
+  const severeRate = count > 0 ? Math.round((severeCount / count) * 100) : 0;
 
   // 12-Month Historical Data Series for Curve Chart
   const months = ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr'];
@@ -2459,8 +2459,8 @@ function CrmAnalyticsView({ records, navigate, t, lang, onOpenChat }: CrmAnalyti
           </div>
           <div className="kpi-value">{count}</div>
           <div className="kpi-footer">
-            <span className="kpi-pill-badge">{lang === 'ta' ? 'ஆய்வுகள்' : 'Field Scans'}</span>
-            <small>{hasUserRecords ? `${records.length} ${lang === 'ta' ? 'நேரலை' : 'live'}` : (lang === 'ta' ? 'மாதிரி பண்ணை' : 'Farm Scans')}</small>
+            <span className="kpi-pill-badge">{hasUserRecords ? (lang === 'ta' ? 'ஆய்வுகள்' : 'Field Scans') : (lang === 'ta' ? 'பதிவுகள் இல்லை' : 'No Records')}</span>
+            <small>{hasUserRecords ? `${records.length} ${lang === 'ta' ? 'நேரலை' : 'live'}` : (lang === 'ta' ? '0 கள ஆய்வுகள்' : '0 field records')}</small>
           </div>
         </div>
 
@@ -2469,10 +2469,10 @@ function CrmAnalyticsView({ records, navigate, t, lang, onOpenChat }: CrmAnalyti
             <span>{t.vitalityIndex}</span>
             <TrendingUp size={16} />
           </div>
-          <div className="kpi-value">{vitalityRate}%</div>
+          <div className="kpi-value">{hasUserRecords ? `${vitalityRate}%` : '—'}</div>
           <div className="kpi-footer">
-            <span className="kpi-pill-badge positive">+{lang === 'ta' ? 'ஆரோக்கியம்' : 'Healthy'}</span>
-            <small>{healthyCount} / {count} {lang === 'ta' ? 'பயிர்கள்' : 'plants'}</small>
+            <span className="kpi-pill-badge positive">{hasUserRecords ? `+${lang === 'ta' ? 'ஆரோக்கியம்' : 'Healthy'}` : (lang === 'ta' ? 'காத்திருக்கிறது' : 'Pending')}</span>
+            <small>{hasUserRecords ? `${healthyCount} / ${count} ${lang === 'ta' ? 'பயிர்கள்' : 'plants'}` : (lang === 'ta' ? '0 பயிர்கள்' : '0 plants')}</small>
           </div>
         </div>
 
@@ -2481,10 +2481,10 @@ function CrmAnalyticsView({ records, navigate, t, lang, onOpenChat }: CrmAnalyti
             <span>{t.treatmentSuccess}</span>
             <ShieldCheck size={16} />
           </div>
-          <div className="kpi-value">{recoveryRate}%</div>
+          <div className="kpi-value">{hasUserRecords ? `${recoveryRate}%` : '—'}</div>
           <div className="kpi-footer">
-            <span className="kpi-pill-badge">{lang === 'ta' ? 'குணமடையும்' : 'Curable'}</span>
-            <small>{treatableCount} {lang === 'ta' ? 'பரிந்துரைகள்' : 'remedies'}</small>
+            <span className="kpi-pill-badge">{hasUserRecords ? (lang === 'ta' ? 'குணமடையும்' : 'Curable') : '—'}</span>
+            <small>{hasUserRecords ? `${treatableCount} ${lang === 'ta' ? 'பரிந்துரைகள்' : 'remedies'}` : (lang === 'ta' ? '0 பரிந்துரைகள்' : '0 remedies')}</small>
           </div>
         </div>
 
@@ -2493,10 +2493,10 @@ function CrmAnalyticsView({ records, navigate, t, lang, onOpenChat }: CrmAnalyti
             <span>{t.aiConfidenceRate}</span>
             <Award size={16} />
           </div>
-          <div className="kpi-value">{avgAccuracy}%</div>
+          <div className="kpi-value">{hasUserRecords ? `${avgAccuracy}%` : '—'}</div>
           <div className="kpi-footer">
-            <span className="kpi-pill-badge positive">{lang === 'ta' ? 'துல்லியம்' : 'Accuracy'}</span>
-            <small>{lang === 'ta' ? 'AI பரிசோதனை' : 'AI Testing'}</small>
+            <span className="kpi-pill-badge positive">{hasUserRecords ? (lang === 'ta' ? 'துல்லியம்' : 'Accuracy') : (lang === 'ta' ? 'தயார் நிலை' : 'Ready')}</span>
+            <small>{hasUserRecords ? (lang === 'ta' ? 'AI பரிசோதனை' : 'AI Testing') : (lang === 'ta' ? 'AI மருத்துவர் தயார்' : 'AI Ready to Scan')}</small>
           </div>
         </div>
 
@@ -2505,10 +2505,10 @@ function CrmAnalyticsView({ records, navigate, t, lang, onOpenChat }: CrmAnalyti
             <span>{t.pathogenRate}</span>
             <AlertTriangle size={16} />
           </div>
-          <div className="kpi-value">{pathogenRate}%</div>
+          <div className="kpi-value">{hasUserRecords ? `${pathogenRate}%` : '0%'}</div>
           <div className="kpi-footer">
-            <span className="kpi-pill-badge warning">{sickCount} {lang === 'ta' ? 'பாதிப்புகள்' : 'cases'}</span>
-            <small>{lang === 'ta' ? 'கண்காணிப்பில்' : 'Need Attention'}</small>
+            <span className="kpi-pill-badge warning">{hasUserRecords ? `${sickCount} ${lang === 'ta' ? 'பாதிப்புகள்' : 'cases'}` : (lang === 'ta' ? 'பாதிப்பு இல்லை' : '0 cases')}</span>
+            <small>{hasUserRecords ? (lang === 'ta' ? 'கண்காணிப்பில்' : 'Need Attention') : (lang === 'ta' ? 'பாதுகாப்பானது' : 'Safe Fields')}</small>
           </div>
         </div>
 
@@ -2517,13 +2517,36 @@ function CrmAnalyticsView({ records, navigate, t, lang, onOpenChat }: CrmAnalyti
             <span>{t.severeRisk}</span>
             <Sprout size={16} />
           </div>
-          <div className="kpi-value">{severeRate}%</div>
+          <div className="kpi-value">{hasUserRecords ? `${severeRate}%` : '0%'}</div>
           <div className="kpi-footer">
-            <span className="kpi-pill-badge">{severeCount} {lang === 'ta' ? 'அவசர நிலை' : 'critical'}</span>
-            <small>{lang === 'ta' ? 'உடனடி சிகிச்சை' : 'Quick Action'}</small>
+            <span className="kpi-pill-badge">{hasUserRecords ? `${severeCount} ${lang === 'ta' ? 'அவசர நிலை' : 'critical'}` : (lang === 'ta' ? 'ஆபத்து இல்லை' : '0 critical')}</span>
+            <small>{hasUserRecords ? (lang === 'ta' ? 'உடனடி சிகிச்சை' : 'Quick Action') : (lang === 'ta' ? 'ஆபத்து இல்லை' : 'No Danger')}</small>
           </div>
         </div>
       </div>
+
+      {!hasUserRecords && (
+        <div className="crm-empty-state-notice">
+          <div className="empty-icon-wrap">
+            <Sprout size={32} />
+          </div>
+          <div className="empty-text-wrap">
+            <h4>{lang === 'ta' ? 'உங்கள் பண்ணையில் இன்னும் எந்த பயிர் ஆய்வுகளும் செய்யப்படவில்லை' : 'No Crop Scans in Your Farm History Yet'}</h4>
+            <p>
+              {lang === 'ta'
+                ? 'உங்கள் பயிர்களின் இலை புகைப்படத்தை எடுத்து ஆய்வு செய்தால், உங்கள் பண்ணையின் நேரலை நலம், நோய் பரவல் மற்றும் அறுவடை மீட்பு வரைபடங்கள் தானாகவே இங்கே உருவாகும். கீழே உள்ள வரைபடங்கள் வேளாண் மாதிரி வழிகாட்டிக்காக காட்டப்படுகின்றன.'
+                : 'Scan or upload a crop leaf photo to automatically generate live monthly health curves, disease breakdown, and recovery analytics for your farm. The charts below show an agricultural benchmark model.'}
+            </p>
+          </div>
+          <button
+            type="button"
+            className="crm-action-btn primary"
+            onClick={() => navigate('scan')}
+          >
+            <ScanLine size={16} /> {lang === 'ta' ? 'முதல் பயிர் ஆய்வைத் தொடங்கு' : 'Start First Crop Scan'}
+          </button>
+        </div>
+      )}
 
 
 
