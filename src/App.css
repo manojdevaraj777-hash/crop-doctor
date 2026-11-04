@@ -580,15 +580,15 @@ a {
 
 .crop-selector-bar {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  flex-direction: column;
+  gap: 8px;
   margin-bottom: 14px;
-  padding: 8px 12px;
+  padding: 10px 12px;
   background: #f1f6ed;
   border: 1px solid var(--line);
   border-radius: 9px;
-  flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 body.dark-mode .crop-selector-bar {
@@ -596,15 +596,15 @@ body.dark-mode .crop-selector-bar {
   border-color: #224230;
 }
 
-.crop-selector-field {
+.crop-selector-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex: 1;
-  min-width: 220px;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
 }
 
-.crop-selector-field label {
+.crop-selector-label {
   font-size: 13px;
   font-weight: 700;
   color: var(--ink);
@@ -612,10 +612,19 @@ body.dark-mode .crop-selector-bar {
   align-items: center;
   gap: 6px;
   white-space: nowrap;
+  min-width: 0;
+}
+
+.crop-select-wrapper {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .crop-select {
-  padding: 7px 12px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 12px;
   border-radius: 7px;
   border: 1px solid var(--line);
   background: white;
@@ -624,7 +633,10 @@ body.dark-mode .crop-selector-bar {
   font-weight: 600;
   outline: none;
   cursor: pointer;
-  flex: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  display: block;
 }
 
 body.dark-mode .crop-select {
@@ -634,19 +646,20 @@ body.dark-mode .crop-select {
 }
 
 .browse-plants-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 7px 13px;
+  gap: 5px;
+  padding: 5px 11px;
   font-size: 12px;
   font-weight: 700;
   background: transparent;
   color: var(--green);
   border: 1px solid var(--green);
-  border-radius: 7px;
+  border-radius: 6px;
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .browse-plants-btn:hover {
@@ -716,25 +729,27 @@ body.dark-mode .dropzone.has-image {
 
 .image-view-toolbar {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  right: 10px;
+  top: 8px;
+  left: 8px;
+  right: 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 6px;
   z-index: 10;
   pointer-events: auto;
+  flex-wrap: wrap;
 }
 
 .view-mode-pills {
   display: flex;
   gap: 4px;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(8px);
   padding: 3px;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.15);
+  flex-wrap: wrap;
 }
 
 .view-mode-pill {
@@ -750,6 +765,7 @@ body.dark-mode .dropzone.has-image {
   background: transparent;
   cursor: pointer;
   transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
 .view-mode-pill:hover {
@@ -1006,7 +1022,7 @@ body.dark-mode .dropzone.has-image {
 
 .result-facts {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   margin-top: 21px;
   padding-top: 15px;

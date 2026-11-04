@@ -51,10 +51,10 @@ const translations = {
     uploadAndHitAnalyze: 'Upload an image and hit analyze.',
     scanToGetTreatment: 'Scan an image to get treatment recommendations.',
     viewFullTreatmentPlan: 'View Full Step-by-Step Treatment Plan',
-    standardFit: 'Standard Fit (100% Full)',
+    standardFit: 'Standard Fit',
     fillFrame: 'Fill Frame',
     fullView: 'Full View',
-    standardAspectBadge: 'Standard Aspect • 100% Full Uncropped',
+    standardAspectBadge: 'Standard Fit • 100%',
     filledViewBadge: 'Filled View',
     fieldAssistant: 'Field assistant',
     askAboutCrop: 'Ask about your crop...',
@@ -147,7 +147,7 @@ const translations = {
     step1Upload: '01 / பதிவேற்றம்',
     imageInput: 'பட உள்ளீடு',
     plantType: 'பயிர் வகை:',
-    autoDetectPlant: '✨ AI மூலம் தானாக கண்டறி (அனைத்து பயிர்களும்)',
+    autoDetectPlant: '✨ AI மூலம் கண்டறி (அனைத்து பயிர்களும்)',
     plantTypesGuide: 'பயிர் வகைகள் வழிகாட்டி',
     dropPhotoHere: 'தாவர அல்லது இலை புகைப்படத்தை இங்கே பதிவேற்றவும்',
     browseFromDevice: 'சாதனத்திலிருந்து தேர்ந்தெடுக்கவும்',
@@ -168,10 +168,10 @@ const translations = {
     uploadAndHitAnalyze: 'படத்தைப் பதிவேற்றி ஆய்வு செய் பொத்தானை அழுத்தவும்.',
     scanToGetTreatment: 'சிகிச்சை பரிந்துரைகளைப் பெற புகைப்படத்தை ஆய்வு செய்யவும்.',
     viewFullTreatmentPlan: 'முழுமையான சிகிச்சை முறையை காண்க',
-    standardFit: 'முழு காட்சி (Standard Fit)',
-    fillFrame: 'சட்டத்தை நிரப்பு (Fill Frame)',
+    standardFit: 'முழு காட்சி',
+    fillFrame: 'நிரப்பு காட்சி',
     fullView: 'முழுத்திரை',
-    standardAspectBadge: 'முழு காட்சி • 100% வெட்டப்படாத படம்',
+    standardAspectBadge: 'முழு காட்சி • 100%',
     filledViewBadge: 'நிரப்பப்பட்ட காட்சி',
     fieldAssistant: 'விவசாய உதவியாளர்',
     askAboutCrop: 'உங்கள் பயிர் பற்றி கேளுங்கள்...',
@@ -1159,10 +1159,22 @@ function ScanView({
           </div>
 
           <div className="crop-selector-bar">
-            <div className="crop-selector-field">
-              <label htmlFor="crop-select">
-                <Sprout size={16} /> {t.plantType}
+            <div className="crop-selector-header">
+              <label htmlFor="crop-select" className="crop-selector-label">
+                <Sprout size={16} style={{ color: 'var(--green)', flexShrink: 0 }} />
+                <span>{t.plantType}</span>
               </label>
+              <button
+                type="button"
+                className="browse-plants-btn"
+                onClick={() => setShowPlantGuide(true)}
+                title="Explore visual guides and characteristics for plant types"
+              >
+                <BookOpen size={14} style={{ flexShrink: 0 }} />
+                <span>{t.plantTypesGuide}</span>
+              </button>
+            </div>
+            <div className="crop-select-wrapper">
               <select
                 id="crop-select"
                 value={selectedCrop}
@@ -1191,14 +1203,6 @@ function ScanView({
                 </optgroup>
               </select>
             </div>
-            <button
-              type="button"
-              className="browse-plants-btn"
-              onClick={() => setShowPlantGuide(true)}
-              title="Explore visual guides and characteristics for plant types"
-            >
-              <BookOpen size={14} /> {t.plantTypesGuide}
-            </button>
           </div>
 
           <div
