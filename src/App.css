@@ -4078,11 +4078,29 @@ body.dark-mode .legend-card {
   color: var(--green);
 }
 
-/* KPI Gradient Cards */
+/* KPI Gradient Cards (Balanced 6 or 3x2 Grid) */
 .crm-kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 14px;
+}
+
+@media (min-width: 1380px) {
+  .crm-kpi-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+@media (max-width: 680px) {
+  .crm-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 440px) {
+  .crm-kpi-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .crm-kpi-card {

@@ -2418,7 +2418,6 @@ function CrmAnalyticsView({ records, navigate, t, lang, onOpenChat }: CrmAnalyti
           </div>
           <div>
             <span className="eyebrow">{t.cropHealthCrm}</span>
-            <h2>{t.crmAnalytics}</h2>
             <p className="crm-subtitle-copy">{t.crmSubtitle}</p>
           </div>
         </div>
