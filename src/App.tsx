@@ -3,7 +3,7 @@ import type { FormEvent, RefObject } from 'react'
 import { AlertTriangle, ArrowUpRight, BookOpen, Camera, Check, CloudUpload, Eye, FileText, History, Leaf, LeafyGreen, LoaderCircle, LogOut, Maximize2, Menu, MessageCircle, Minimize2, Moon, ScanLine, Send, Settings2, ShieldCheck, Sprout, Stethoscope, Sun, Trash2, Upload, X, ZoomIn, ZoomOut } from 'lucide-react'
 import './App.css'
 
-type Diagnosis = { crop: string; disease: string; confidence: number; severity: string; treatable: boolean; summary: string; cause?: string; actions: string[]; treatmentSteps?: string[]; organic?: string[]; prevention?: string[]; medicines?: string[]; isDemo?: boolean; imageUrl?: string }
+type Diagnosis = { crop: string; disease: string; confidence: number; severity: string; treatable: boolean; summary: string; cause?: string; actions: string[]; treatmentSteps?: string[]; organic?: string[]; prevention?: string[]; medicines?: string[]; isDemo?: boolean; imageUrl?: string; cropMismatch?: boolean; specifiedCrop?: string; detectedCrop?: string; mismatchMessage?: string }
 type DiagnosticRecord = Diagnosis & { id: string; date: string; fileName: string; imageUrl?: string }
 type ChatMessage = { role: 'assistant' | 'user'; text: string }
 type Session = { name: string; email: string }
@@ -901,7 +901,7 @@ const SUPPORTED_PLANTS: PlantInfo[] = [
     categoryTa: 'தானியப் பயிர்',
     icon: '🌽',
     regionalNames: 'Corn, Makka / மக்காச்சோளம்',
-    identifiers: ['Broad leaves with wavy margins arranged alternately', 'Prominent male tassels at the apex of the stalk', 'Ears with fine silks developing along mid-stalk nodes'],
+    identifiers: ['Broad leaves with wavy margins and distinct pale midrib', 'Prominent multi-branched feathery tassels (male pollen plumes) at apex', 'Ears with fine silks developing along mid-stalk nodes'],
     identifiersTa: ['அலை போன்ற விளிம்புகளுடன் கூடிய அகன்ற இலைகள்', 'தண்டின் உச்சியில் தோன்றும் ஆண் பூங்கொத்து (Tassel)', 'நடுத் தண்டு கணுக்களில் பட்டு நூல் போன்ற இழைகளுடன் வளரும் கதிர்கள்'],
     commonDiseases: ['Northern Corn Leaf Blight', 'Common Rust', 'Gray Leaf Spot', 'Smut'],
     commonDiseasesTa: ['இலைக்கருகல் நோய்', 'துரு நோய் (Rust)', 'சாம்பல் இலைப்புள்ளி', 'கரிப்பூட்டை நோய்']
@@ -925,7 +925,7 @@ const SUPPORTED_PLANTS: PlantInfo[] = [
     categoryTa: 'சிறு தானியம்',
     icon: '🌾',
     regionalNames: 'Bajra, Sajje, Kambu / கம்பு',
-    identifiers: ['Tall robust stalks with vigorous vegetative growth', 'Thick, cylindrical, candle-like dense seed spikes', 'Upright leaves with fine surface hairs'],
+    identifiers: ['Tall robust stalks with upright leaves', 'Single, solid, unbranched dense cylindrical spike (candle-like)', 'NEVER produces branched spreading feathery tassels'],
     identifiersTa: ['வலுவான உயரமான தண்டு வளர்ச்சி', 'மெழுகுவர்த்தி போன்ற உருளை வடிவ அடர்ந்த கதிர்', 'மெல்லிய ரோமங்கள் கொண்ட நேரான இலைகள்'],
     commonDiseases: ['Downy Mildew (Green Ear)', 'Rust', 'Ergot', 'Smut'],
     commonDiseasesTa: ['அடிச்சாம்பல் நோய் (Green Ear)', 'துரு நோய்', 'எர்காட் நோய்', 'கரிப்பூட்டை நோய்']
@@ -1290,6 +1290,39 @@ function ScanView({
               <i />{status === 'analyzing' ? t.analyzing : diagnosis ? 'Done' : 'Waiting'}
             </span>
           </div>
+          {diagnosis?.cropMismatch && (
+            <div className="crop-mismatch-banner">
+              <AlertTriangle size={20} className="mismatch-icon" />
+              <div className="mismatch-text">
+                <strong>{lang === 'ta' ? '⚠️ பயிர் வகை முரண்பாடு கண்டறியப்பட்டது' : '⚠️ Crop Mismatch Detected'}</strong>
+                <p>
+                  {diagnosis.mismatchMessage || (lang === 'ta'
+                    ? `நீங்கள் '${diagnosis.specifiedCrop}' என்று தேர்ந்தெடுத்தீர்கள், ஆனால் புகைப்படத்தில் இருப்பது '${diagnosis.detectedCrop || diagnosis.crop}'. துல்லியமான மருத்துவத்திற்காக '${diagnosis.detectedCrop || diagnosis.crop}' பயிராக ஆய்வு செய்யப்பட்டுள்ளது.`
+                    : `You selected '${diagnosis.specifiedCrop}', but our AI visual analysis detected this is '${diagnosis.detectedCrop || diagnosis.crop}'. We diagnosed it as '${diagnosis.detectedCrop || diagnosis.crop}' for agricultural accuracy.`
+                  )}
+                </p>
+                {diagnosis.detectedCrop && (
+                  <button
+                    type="button"
+                    className="sync-crop-btn"
+                    onClick={() => {
+                      const match = SUPPORTED_PLANTS.find(p =>
+                        diagnosis.detectedCrop?.toLowerCase().includes(p.name.toLowerCase()) ||
+                        p.name.toLowerCase().includes(diagnosis.detectedCrop?.toLowerCase() || '')
+                      );
+                      if (match) {
+                        setSelectedCrop(match.name);
+                      } else {
+                        setSelectedCrop('auto');
+                      }
+                    }}
+                  >
+                    {lang === 'ta' ? `பயிர் தேர்வை '${diagnosis.detectedCrop}' ஆக மாற்று` : `Sync Dropdown to '${diagnosis.detectedCrop}'`}
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
           <div className="result-content">
             <div className="result-head">
               <div>

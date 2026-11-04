@@ -282,6 +282,10 @@ You MUST provide all textual fields in fluent, easy-to-understand Tamil (தம�
 Analyze the uploaded crop, leaf, plant, or field photo and return ONLY valid JSON with this exact structure:
 {
   "crop": "string",
+  "cropMismatch": boolean,
+  "specifiedCrop": "string",
+  "detectedCrop": "string",
+  "mismatchMessage": "string",
   "disease": "string",
   "confidence": number,
   "severity": "Low|Moderate|High|Unknown",
@@ -295,21 +299,43 @@ Analyze the uploaded crop, leaf, plant, or field photo and return ONLY valid JSO
   "medicines": ["string"]
 }
 
-Rules for Plant Identification ("crop"):
-1. Accurately identify the specific plant type from the visual features (leaves, venation, stalks, tassels, panicles, seed spikes, flowers, or fruit).
-2. Distinguish carefully between cereals and grass-family crops:
-   - Maize (Corn): broad alternating leaves with wavy margins, prominent male tassels at the apex, cobs with silks along mid-stalk.
-   - Rice (Paddy): slender upright green leaves, drooping panicles with golden grains.
-   - Pearl Millet (Bajra): tall robust stalks, thick cylindrical candle-like seed spikes (heads).
-   - Sorghum (Jowar): broad leaves similar to maize but topped with large open or dense spherical/pyramidal seed clusters (no side cobs).
-   - Wheat: compact spikes with awns (beards) and dense spikelets.
-   - Other common plants: Cotton, Sugarcane, Tomato, Potato, Chili / Pepper, Soybean, Groundnut, Onion, etc.
-3. For "crop", provide the common name alongside regional or alternate names when helpful (e.g. "Maize (Corn)", "Rice (Paddy)", "Pearl Millet (Bajra)", "Sorghum (Jowar)", "Tomato", "Potato").
-${specifiedCrop ? `4. The user specified this plant is ${specifiedCrop}. Validate against the visual evidence and use this crop context.` : `4. The user requested auto-detection: carefully determine the exact plant type from the image.`}
+CRITICAL BOTANICAL IDENTIFICATION RULES (DO NOT MISCLASSIFY):
+1. Maize / Corn (மக்காச்சோளம்):
+   - Inflorescence: The summit of the stalk bears BRANCHED, FEATHERY TASSELS (spreading finger-like pollen plumes).
+   - Leaves: Wide, arching, ribbon-like leaves with wavy margins and a distinct light-colored central midrib.
+   - Ears/Cobs (கதிர்கள்): Form along the MID-STALK nodes with fine silks (stigmata).
+   - MANDATORY RULE: Any field of tall green stalks with branched spreading feathery flower tassels at the top (like cornfields against the sky) is 100% MAIZE (CORN / மக்காச்சோளம்)! It is NEVER Pearl Millet, NEVER Bajra, and NEVER Sorghum!
+2. Pearl Millet / Bajra (கம்பு):
+   - Inflorescence: A single, very compact, dense, solid, UNBRANCHED CYLINDRICAL spike (resembling a thick gray-green candle, cattail, or corn dog) at the very apex.
+   - It NEVER has branched spreading feathery tassels! If the inflorescence has spreading lateral branches, it is MAIZE, NOT Bajra!
+3. Rice / Paddy (நெல்):
+   - Slender upright green grass blades, with drooping branched panicles of hanging individual golden or greenish grains.
+4. Sorghum / Jowar (சோளம்):
+   - Produces a dense or open spherical/pyramidal panicle packed with round grains at the top of the stalk. It does NOT produce ears along the mid-stalk.
+5. Dicot Vegetables (Tomato / தக்காளி, Potato, Chili, Cotton, Soybean):
+   - Possess broad, compound, lobed, or serrated leaves with netted veins, totally distinct from grass-like cereal monocots.
+
+CROP MISMATCH & VALIDATION LOGIC:
+1. First, visually inspect the image and independently identify what plant is actually in the photo ("detectedCrop").
+${specifiedCrop ? `2. The user selected '${specifiedCrop}' in the UI.
+   - You MUST check whether the image actually depicts '${specifiedCrop}'.
+   - If the user selected '${specifiedCrop}' (e.g. Tomato), but the photo clearly shows a different crop (e.g. Maize, Rice, Bajra, Wheat, etc.):
+     * Set "cropMismatch": true
+     * Set "specifiedCrop": "${specifiedCrop}"
+     * Set "detectedCrop": the actual visually detected crop
+     * Set "crop": the actual visually detected crop
+     * Set "mismatchMessage": Explain clearly that the user selected ${specifiedCrop}, but the image actually depicts [detectedCrop], detailing the visible botanical traits.
+     * Base your disease analysis and treatment recommendations on the ACTUAL plant shown in the image, NOT the incorrect selection!
+   - If the user's selection matches the image:
+     * Set "cropMismatch": false
+     * Set "specifiedCrop": "${specifiedCrop}"
+     * Set "detectedCrop": "${specifiedCrop}"
+     * Set "crop": "${specifiedCrop}"
+     * Set "mismatchMessage": ""` : `2. Auto-detect mode: Set "cropMismatch": false, "specifiedCrop": "auto", "detectedCrop": crop name, "mismatchMessage": "".`}
 
 Rules for Disease & Health:
-- If no disease is detected, set "disease" to "Healthy", "severity" to "Low", "treatable" to true, and explain in "summary" that the plant is vigorous and healthy, noting its visible features.
-- If symptoms, blight, rust, mold, rot, or pests are visible, identify the specific disease name.
+- If no disease is detected, set "disease" to "Healthy" (or "ஆரோக்கியமானது (Healthy)"), "severity" to "Low", "treatable" to true, and explain in "summary" that the crop is healthy and growing vigorously.
+- If pests, leaf blight, spot, rust, mold, or mildew are visible, diagnose the specific disease.
 
 Rules for Confidence:
 - Return confidence as an integer percentage from 0 to 100 (e.g. 95, not 0.95).
@@ -317,8 +343,8 @@ Rules for Confidence:
 Provide comprehensive arrays for actions, treatmentSteps, organic (natural/cultural remedies), prevention, and medicines (scientific chemicals/fungicides).${languageInstruction}`
 
     const userPromptText = specifiedCrop
-      ? `Analyze this photo of ${specifiedCrop}. Identify its health status, any diseases present, visual characteristics, and actionable treatment steps.${isTamil ? ' Respond in Tamil.' : ''}`
-      : `Analyze this plant photo. First accurately determine the plant type (crop) using its leaves, stalks, tassels, or seed heads, then diagnose health status and any diseases present.${isTamil ? ' Respond in Tamil.' : ''}`
+      ? `The user selected this plant as '${specifiedCrop}'. Visually verify if this image is genuinely '${specifiedCrop}' or a different plant (e.g. Maize/Corn, Rice, Pearl Millet/Bajra, Wheat, Tomato, etc.). If there is a mismatch, set cropMismatch: true and diagnose the actual plant shown in the photo. Identify its health status and actionable treatment steps.${isTamil ? ' Respond in Tamil.' : ''}`
+      : `Analyze this crop photo. First accurately identify the specific plant type (remember: branched feathery tassels at stalk tops = Maize/Corn; single solid unbranched cylindrical spike = Pearl Millet/Bajra; drooping golden panicles = Rice; spherical seed head = Sorghum; compound lobed leaves = Tomato/Potato). Then diagnose health condition and actionable treatments.${isTamil ? ' Respond in Tamil.' : ''}`
 
     const groqResponse = await requestGroq(
       process.env.GROQ_VISION_MODEL || DEFAULT_VISION_MODEL,
@@ -360,7 +386,7 @@ Provide comprehensive arrays for actions, treatmentSteps, organic (natural/cultu
     }
     if (!confidenceVal) confidenceVal = 92
 
-    const finalCrop = result.crop || specifiedCrop || 'General Plant'
+    const finalCrop = result.crop || result.detectedCrop || specifiedCrop || 'General Plant'
 
     return response.json({
       ...result,
