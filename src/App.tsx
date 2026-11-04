@@ -70,8 +70,8 @@ const translations = {
     latestCrop: 'Latest Crop',
     healthCondition: 'Health Condition',
     averageAccuracy: 'Diagnostic Accuracy',
-    crmAnalytics: 'CRM Visual Analytics',
-    crmSubtitle: 'Agricultural CRM intelligence, visual symptom reasoning, and disease trajectory models',
+    crmAnalytics: 'Farm Health Analytics',
+    crmSubtitle: 'Comprehensive agricultural intelligence, visual symptom reasoning, and disease trajectory models',
     totalScansAcreage: 'Total Field Scans',
     vitalityIndex: 'Farm Vitality Index',
     pathogenRate: 'Infection Rate',
@@ -87,7 +87,7 @@ const translations = {
     filterCrop: 'Filter by Crop',
     filterTimeframe: 'Time Horizon',
     filterSeverity: 'Severity Tier',
-    exportDashboard: 'Export CRM Analytics',
+    exportDashboard: 'Export Farm Analytics',
     allCrops: 'All Farm Crops',
     allTime: '12 Months (Full Cycle)',
     last6Months: 'Last 6 Months',
@@ -100,9 +100,9 @@ const translations = {
     projectedYieldLine: 'Harvest Yield Index',
     projectedRecoveryLine: 'Treated Recovery Rate',
     sampleDataNotice: 'Displaying comprehensive farm analytics with live diagnostic model intelligence.',
-    askAgronomistCrm: 'Ask AI Agronomist about CRM Data',
-    viewFullCrm: 'Open Full CRM Visual Reasoning',
-    cropHealthCrm: 'CROP HEALTH CRM DASHBOARD',
+    askAgronomistCrm: 'Ask AI Agronomist about Farm Data',
+    viewFullCrm: 'Open Farm Health Analytics',
+    cropHealthCrm: 'FARM HEALTH & INTELLIGENCE',
     healthSpeedometer: 'Crop Health Speedometer Index',
     healthyZone: 'Healthy',
     goodZone: 'Good',
@@ -227,8 +227,8 @@ const translations = {
     latestCrop: 'சமீபத்திய பயிர்',
     healthCondition: 'பயிர் நிலைமை',
     averageAccuracy: 'சராசரி துல்லியம்',
-    crmAnalytics: 'CRM வரைகலை பகுப்பாய்வு',
-    crmSubtitle: 'விவசாய CRM நுண்ணறிவு, காட்சி அறிகுறி பகுப்பாய்வு மற்றும் நோய் போக்கு கணிப்பு',
+    crmAnalytics: 'பண்ணை நலம் & பயிர் பகுப்பாய்வு',
+    crmSubtitle: 'முழுமையான விவசாய நுண்ணறிவு, காட்சி அறிகுறி பகுப்பாய்வு மற்றும் நோய் போக்கு கணிப்பு',
     totalScansAcreage: 'மொத்த கள ஆய்வுகள்',
     vitalityIndex: 'பண்ணை ஆரோக்கிய குறியீடு',
     pathogenRate: 'நோய் பாதிப்பு விகிதம்',
@@ -244,7 +244,7 @@ const translations = {
     filterCrop: 'பயிர் வடிகட்டி',
     filterTimeframe: 'கால அளவு',
     filterSeverity: 'பாதிப்பு நிலை',
-    exportDashboard: 'CRM அறிக்கை பதிவிறக்கம்',
+    exportDashboard: 'பண்ணை அறிக்கை பதிவிறக்கம்',
     allCrops: 'அனைத்து பயிர்களும்',
     allTime: '12 மாதங்கள் (முழு பருவம்)',
     last6Months: 'கடந்த 6 மாதங்கள்',
@@ -257,9 +257,9 @@ const translations = {
     projectedYieldLine: 'எதிர்பார்க்கப்படும் மகசூல்',
     projectedRecoveryLine: 'சிகிச்சை மீட்பு விகிதம்',
     sampleDataNotice: 'நேரலை மாதிரி மற்றும் ஆய்வுத் தரவுகளுடன் கூடிய முழுமையான பண்ணை பகுப்பாய்வு.',
-    askAgronomistCrm: 'CRM தரவுகள் பற்றி விவசாய உதவியாளரிடம் கேளுங்கள்',
-    viewFullCrm: 'முழு CRM வரைகலை பகுப்பாய்வைக் காண்க',
-    cropHealthCrm: 'பயிர் நலம் CRM டாஷ்போர்டு',
+    askAgronomistCrm: 'பண்ணை பகுப்பாய்வு பற்றி AI உதவியாளரிடம் கேளுங்கள்',
+    viewFullCrm: 'முழு பண்ணை பகுப்பாய்வைக் காண்க',
+    cropHealthCrm: 'பண்ணை நலம் & நுண்ணறிவு',
     healthSpeedometer: 'பயிர் சுகாதார வேகமானி குறியீடு',
     healthyZone: 'ஆரோக்கியமானது',
     goodZone: 'நன்று',
@@ -1108,7 +1108,7 @@ function Overview({ name, records, navigate, t, lang }: { name: string; records:
                   type="button"
                   className="crm-link-button"
                   onClick={() => navigate('crm')}
-                  title="View full enterprise CRM charts"
+                  title="View full farm health analytics & reasoning"
                 >
                   <BarChart3 size={14} /> {t.viewFullCrm} <ChevronRight size={14} />
                 </button>
