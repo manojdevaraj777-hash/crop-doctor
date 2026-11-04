@@ -70,39 +70,37 @@ const translations = {
     latestCrop: 'Latest Crop',
     healthCondition: 'Health Condition',
     averageAccuracy: 'Diagnostic Accuracy',
-    crmAnalytics: 'CRM Visual Analytics',
-    crmSubtitle: 'Agricultural CRM intelligence, visual symptom reasoning, and disease trajectory models',
-    totalScansAcreage: 'Total Field Scans',
-    vitalityIndex: 'Farm Vitality Index',
-    pathogenRate: 'Infection Rate',
-    treatmentSuccess: 'Recovery Potential',
-    severeRisk: 'Critical Acreage Risk',
-    aiConfidenceRate: 'AI Diagnostic Precision',
-    historicalHealthTrends: 'Historical Crop Health & Infection Trends (12 Months)',
-    yieldHealthProjections: 'Yield & Health Recovery Projections (Next 12 Months)',
-    diseaseSpectrumDonut: 'Disease Spectrum & Pathology Distribution',
-    etiologyStressDonut: 'Pathogen Etiology & Stress Classification',
-    visualReasoningTitle: 'Visual AI Diagnostic Reasoning',
-    visualReasoningSub: 'Deep multi-modal visual symptom analysis and leaf pathology indicators',
-    filterCrop: 'Filter by Crop',
-    filterTimeframe: 'Time Horizon',
-    filterSeverity: 'Severity Tier',
-    exportDashboard: 'Export CRM Analytics',
+    crmAnalytics: 'Farm Health Analytics',
+    crmSubtitle: 'Easy overview of crop health, disease trends, and harvest recovery across your fields',
+    totalScansAcreage: 'Total Crop Scans',
+    vitalityIndex: 'Healthy Crops',
+    pathogenRate: 'Infected Crops',
+    treatmentSuccess: 'Curable Crops',
+    severeRisk: 'Urgent Care Needed',
+    aiConfidenceRate: 'AI Doctor Accuracy',
+    historicalHealthTrends: 'Crop Health History (Past 12 Months)',
+    yieldHealthProjections: 'Expected Harvest & Recovery (Next 12 Months)',
+    diseaseSpectrumDonut: 'Most Common Crop Diseases',
+    etiologyStressDonut: 'What Causes the Crop Damage',
+    filterCrop: 'Choose Crop',
+    filterTimeframe: 'Time Period',
+    filterSeverity: 'Crop Status',
+    exportDashboard: 'Download Farm Report',
     allCrops: 'All Farm Crops',
-    allTime: '12 Months (Full Cycle)',
+    allTime: '12 Months (Full Season)',
     last6Months: 'Last 6 Months',
     last30Days: 'Last 30 Days',
     allSeverities: 'All Conditions',
     healthyOnly: 'Healthy Only',
-    infectedOnly: 'Infected / Sick',
-    healthyTrendLine: 'Healthy Foliage Rate',
-    infectionTrendLine: 'Disease Incidents',
-    projectedYieldLine: 'Harvest Yield Index',
-    projectedRecoveryLine: 'Treated Recovery Rate',
-    sampleDataNotice: 'Displaying comprehensive farm analytics with live diagnostic model intelligence.',
-    askAgronomistCrm: 'Ask AI Agronomist about CRM Data',
-    viewFullCrm: 'Open Full CRM Visual Reasoning',
-    cropHealthCrm: 'CROP HEALTH CRM DASHBOARD',
+    infectedOnly: 'Sick / Infected Only',
+    healthyTrendLine: 'Healthy Crops',
+    infectionTrendLine: 'Sick Crops',
+    projectedYieldLine: 'Expected Harvest Yield',
+    projectedRecoveryLine: 'Recovery Rate',
+    sampleDataNotice: 'Monthly overview of healthy and sick crop changes across your farm.',
+    askAgronomistCrm: 'Ask Crop Doctor AI',
+    viewFullCrm: 'Open Farm Health Analytics',
+    cropHealthCrm: 'FARM HEALTH DASHBOARD',
     healthSpeedometer: 'Crop Health Speedometer Index',
     healthyZone: 'Healthy',
     goodZone: 'Good',
@@ -227,24 +225,22 @@ const translations = {
     latestCrop: 'சமீபத்திய பயிர்',
     healthCondition: 'பயிர் நிலைமை',
     averageAccuracy: 'சராசரி துல்லியம்',
-    crmAnalytics: 'CRM வரைகலை பகுப்பாய்வு',
-    crmSubtitle: 'விவசாய CRM நுண்ணறிவு, காட்சி அறிகுறி பகுப்பாய்வு மற்றும் நோய் போக்கு கணிப்பு',
-    totalScansAcreage: 'மொத்த கள ஆய்வுகள்',
-    vitalityIndex: 'பண்ணை ஆரோக்கிய குறியீடு',
-    pathogenRate: 'நோய் பாதிப்பு விகிதம்',
-    treatmentSuccess: 'மீட்பு குணமடையும் விகிதம்',
-    severeRisk: 'கடுமையான ஆபத்து அளவு',
-    aiConfidenceRate: 'AI நோய் கண்டறிதல் துல்லியம்',
-    historicalHealthTrends: 'பயிர் ஆரோக்கியம் & நோய் வரலாற்று போக்கு (12 மாதங்கள்)',
-    yieldHealthProjections: 'மகசூல் & மீட்பு எதிர்கால கணிப்பு (அடுத்த 12 மாதங்கள்)',
-    diseaseSpectrumDonut: 'நோய் வகை & பரவல் விகிதம்',
-    etiologyStressDonut: 'நோய் காரணி வகைப்பாடு (Etiology)',
-    visualReasoningTitle: 'காட்சி AI பகுப்பாய்வு & காரண விளக்கங்கள்',
-    visualReasoningSub: 'இலை அறிகுறிகள், கருகல் புள்ளிகள் மற்றும் பூஞ்சை பரவல் பற்றிய விரிவான காட்சி விளக்கம்',
-    filterCrop: 'பயிர் வடிகட்டி',
+    crmAnalytics: 'பண்ணை நலம் & பயிர் பகுப்பாய்வு',
+    crmSubtitle: 'பயிர்களின் ஆரோக்கியம், நோய் பாதிப்பு மற்றும் அறுவடை மீட்பு பற்றிய எளிய பண்ணை கண்ணோட்டம்',
+    totalScansAcreage: 'மொத்த பயிர் ஆய்வுகள்',
+    vitalityIndex: 'ஆரோக்கியமான பயிர்கள்',
+    pathogenRate: 'பாதிக்கப்பட்ட பயிர்கள்',
+    treatmentSuccess: 'குணப்படுத்தக்கூடியவை',
+    severeRisk: 'உடனடி கவனம் தேவை',
+    aiConfidenceRate: 'AI மருத்துவர் துல்லியம்',
+    historicalHealthTrends: 'பயிர் நலம் - கடந்த 12 மாத வரலாறு',
+    yieldHealthProjections: 'எதிர்பார்க்கப்படும் மகசூல் & மீட்பு (அடுத்த 12 மாதங்கள்)',
+    diseaseSpectrumDonut: 'பண்ணையில் காணப்படும் முக்கிய நோய்கள்',
+    etiologyStressDonut: 'பயிர் பாதிப்புக்கான காரணங்கள்',
+    filterCrop: 'பயிரைத் தேர்வு செய்க',
     filterTimeframe: 'கால அளவு',
-    filterSeverity: 'பாதிப்பு நிலை',
-    exportDashboard: 'CRM அறிக்கை பதிவிறக்கம்',
+    filterSeverity: 'பயிர் நிலைமை',
+    exportDashboard: 'பண்ணை அறிக்கை பதிவிறக்கம்',
     allCrops: 'அனைத்து பயிர்களும்',
     allTime: '12 மாதங்கள் (முழு பருவம்)',
     last6Months: 'கடந்த 6 மாதங்கள்',
@@ -252,14 +248,14 @@ const translations = {
     allSeverities: 'அனைத்து நிலைகளும்',
     healthyOnly: 'ஆரோக்கியமானது மட்டும்',
     infectedOnly: 'பாதிக்கப்பட்டவை மட்டும்',
-    healthyTrendLine: 'ஆரோக்கிய இலை விகிதம்',
-    infectionTrendLine: 'நோய் பாதிப்பு எண்ணிக்கை',
+    healthyTrendLine: 'ஆரோக்கிய பயிர்கள்',
+    infectionTrendLine: 'பாதிக்கப்பட்ட பயிர்கள்',
     projectedYieldLine: 'எதிர்பார்க்கப்படும் மகசூல்',
-    projectedRecoveryLine: 'சிகிச்சை மீட்பு விகிதம்',
-    sampleDataNotice: 'நேரலை மாதிரி மற்றும் ஆய்வுத் தரவுகளுடன் கூடிய முழுமையான பண்ணை பகுப்பாய்வு.',
-    askAgronomistCrm: 'CRM தரவுகள் பற்றி விவசாய உதவியாளரிடம் கேளுங்கள்',
-    viewFullCrm: 'முழு CRM வரைகலை பகுப்பாய்வைக் காண்க',
-    cropHealthCrm: 'பயிர் நலம் CRM டாஷ்போர்டு',
+    projectedRecoveryLine: 'குணமடையும் வேகம்',
+    sampleDataNotice: 'உங்கள் பண்ணையின் மாதாந்திர பயிர் நலம் பற்றிய விளக்கம்.',
+    askAgronomistCrm: 'விவசாய AI மருத்துவரிடம் கேளுங்கள்',
+    viewFullCrm: 'முழு பண்ணை நலம் & பகுப்பாய்வைக் காண்க',
+    cropHealthCrm: 'பண்ணை நலம் & டாஷ்போர்டு',
     healthSpeedometer: 'பயிர் சுகாதார வேகமானி குறியீடு',
     healthyZone: 'ஆரோக்கியமானது',
     goodZone: 'நன்று',
@@ -2337,53 +2333,22 @@ function CrmAnalyticsView({ records, navigate, t, lang, onOpenChat }: CrmAnalyti
     { m: 11, recovery: 95, yieldIndex: 98 },
   ];
 
-  // Donut 1: Disease Spectrum Segments
+  // Donut 1: Disease Breakdown Segments
   const diseaseSegments = [
-    { id: 'blight', label: lang === 'ta' ? 'இலைக்கருகல் (Blight)' : 'Early / Late Blight', percent: 28, color: '#3b82f6' },
-    { id: 'rust', label: lang === 'ta' ? 'துரு நோய் (Rust)' : 'Foliar Rust & Smut', percent: 21, color: '#ec4899' },
-    { id: 'spot', label: lang === 'ta' ? 'புள்ளி நோய் (Spot)' : 'Blast & Spot Lesions', percent: 18, color: '#f59e0b' },
-    { id: 'mildew', label: lang === 'ta' ? 'சாம்பல் நோய் (Mildew)' : 'Downy / Powdery Mildew', percent: 12, color: '#8b5cf6' },
-    { id: 'healthy', label: lang === 'ta' ? 'ஆரோக்கியமானது' : 'Healthy Foliage', percent: 21, color: '#10b981' },
+    { id: 'blight', label: lang === 'ta' ? 'இலைக்கருகல் நோய்' : 'Blight (Leaf Burn)', percent: 28, color: '#3b82f6' },
+    { id: 'rust', label: lang === 'ta' ? 'துரு நோய் (Rust)' : 'Rust (Powder Spots)', percent: 21, color: '#ec4899' },
+    { id: 'spot', label: lang === 'ta' ? 'இலைப்புள்ளி நோய்' : 'Leaf Spots', percent: 18, color: '#f59e0b' },
+    { id: 'mildew', label: lang === 'ta' ? 'சாம்பல் நோய்' : 'Mildew (White Powder)', percent: 12, color: '#8b5cf6' },
+    { id: 'healthy', label: lang === 'ta' ? 'ஆரோக்கியமான பயிர்கள்' : 'Healthy Crops', percent: 21, color: '#10b981' },
   ];
 
-  // Donut 2: Pathogen Etiology Classification
+  // Donut 2: Causes of Crop Damage
   const etiologySegments = [
-    { id: 'fungal', label: lang === 'ta' ? 'பூஞ்சை தொற்று (Fungal)' : 'Fungal Pathogens', percent: 42, color: '#ef4444' },
-    { id: 'bacterial', label: lang === 'ta' ? 'பாக்டீரியா கருகல்' : 'Bacterial Blights', percent: 18, color: '#f97316' },
-    { id: 'viral', label: lang === 'ta' ? 'வைரஸ் தேமல் (Viral)' : 'Viral Mosaic Vectors', percent: 14, color: '#a855f7' },
-    { id: 'nutrient', label: lang === 'ta' ? 'ஊட்டச்சத்து குறைபாடு' : 'Nutrient Chlorosis', percent: 15, color: '#eab308' },
-    { id: 'water', label: lang === 'ta' ? 'நீர்/வறட்சி அழுத்தம்' : 'Moisture & Heat Stress', percent: 11, color: '#06b6d4' },
-  ];
-
-  // Visual AI Reasoning Cases
-  const reasoningCases = [
-    {
-      title: lang === 'ta' ? 'கதிரியக்க வளைய கருகல் புள்ளி பகுப்பாய்வு' : 'Concentric Target-Spot Lesion Logic',
-      crop: lang === 'ta' ? 'உருளை / தக்காளி' : 'Potato / Solanaceae',
-      symptom: lang === 'ta' ? 'இலைகளில் பொது மைய வளைய அமைப்புகள் மற்றும் மஞ்சள் நிற ஒளிவட்டம் (Chlorotic halo).' : 'Distinctive target-board concentric necrotic rings on older foliage with yellow chlorotic perimeter.',
-      confidence: 96,
-      etiology: 'Alternaria solani (Early Blight)',
-      action: lang === 'ta' ? 'காப்பர் ஆக்ஸிகுளோரைடு அல்லது மேன்கோசெப் தடுப்பு தெளிப்பு.' : 'Apply preventive Copper Oxychloride or Mancozeb before spore dispersal.',
-      badgeColor: '#3b82f6'
-    },
-    {
-      title: lang === 'ta' ? 'நரம்பிடை வெளிர்தல் & பச்சைய குறைபாடு' : 'Interveinal Chlorosis Pattern Logic',
-      crop: lang === 'ta' ? 'மக்காச்சோளம் / சோளம்' : 'Maize / Cereals',
-      symptom: lang === 'ta' ? 'முக்கிய நரம்புகள் பச்சையாகவும், இடையில் உள்ள திசுக்கள் வெளிறிய மஞ்சள் நிறமாகவும் காணப்படுகிறது.' : 'Fine parallel yellow striping between persistent dark green veins indicating iron/nitrogen uptake inhibition.',
-      confidence: 94,
-      etiology: 'Micronutrient Deficiency (Fe / Zn / N)',
-      action: lang === 'ta' ? 'துத்தநாக சல்பேட் (0.5%) மற்றும் ஃபெரஸ் சல்பேட் இலைவழி தெளிப்பு.' : 'Foliar spray of 0.5% Ferrous Sulfate + Zinc Sulfate with organic wetting agent.',
-      badgeColor: '#eab308'
-    },
-    {
-      title: lang === 'ta' ? 'பூஞ்சை வித்து கொப்புளங்கள் கண்டறிதல்' : 'Raised Spore Pustule Density Logic',
-      crop: lang === 'ta' ? 'கம்பு / சோளம்' : 'Pearl Millet (Bajra) / Maize',
-      symptom: lang === 'ta' ? 'இலைகளின் இருபுறமும் செம்பழுப்பு நிற பொடி போன்ற வித்து குவியல்கள் (Pustules).' : 'Elevated reddish-brown powdery uredinia rupturing through upper epidermis.',
-      confidence: 92,
-      etiology: 'Puccinia substriata (Rust)',
-      action: lang === 'ta' ? 'புரோபிகோனசோல் (Propiconazole) 1 மி.லி / லிட்டர் தண்ணீர்.' : 'Apply systemic triazole fungicide and prune heavily lodged tillers.',
-      badgeColor: '#ec4899'
-    }
+    { id: 'fungal', label: lang === 'ta' ? 'பூஞ்சை தொற்று' : 'Fungus (Mold / Spores)', percent: 42, color: '#ef4444' },
+    { id: 'bacterial', label: lang === 'ta' ? 'பாக்டீரியா நோய்' : 'Bacterial Blight', percent: 18, color: '#f97316' },
+    { id: 'viral', label: lang === 'ta' ? 'வைரஸ் தொற்று' : 'Virus Infection', percent: 14, color: '#a855f7' },
+    { id: 'nutrient', label: lang === 'ta' ? 'சத்து குறைபாடு' : 'Lack of Nutrients / Fertilizer', percent: 15, color: '#eab308' },
+    { id: 'water', label: lang === 'ta' ? 'நீர் / வெப்ப தாக்கம்' : 'Water or Heat Stress', percent: 11, color: '#06b6d4' },
   ];
 
   // Helper for generating smooth SVG curve path from points
@@ -2485,10 +2450,18 @@ function CrmAnalyticsView({ records, navigate, t, lang, onOpenChat }: CrmAnalyti
           <button
             type="button"
             className="crm-action-btn secondary"
+            onClick={() => navigate('scan')}
+            title={lang === 'ta' ? 'புதிய பயிர் ஆய்வு' : 'New Crop Scan'}
+          >
+            <ScanLine size={15} /> {lang === 'ta' ? 'புதிய ஆய்வு' : 'New Scan'}
+          </button>
+          <button
+            type="button"
+            className="crm-action-btn secondary"
             onClick={onOpenChat}
             title={t.askAgronomistCrm}
           >
-            <MessageCircle size={15} /> {lang === 'ta' ? 'விவசாயி AI உதவி' : 'Agronomist AI'}
+            <MessageCircle size={15} /> {lang === 'ta' ? 'விவசாயி AI உதவி' : 'Crop Doctor AI'}
           </button>
           <button
             type="button"
@@ -2501,7 +2474,7 @@ function CrmAnalyticsView({ records, navigate, t, lang, onOpenChat }: CrmAnalyti
         </div>
       </div>
 
-      {/* KPI Cards Row (Vibrant enterprise gradient cards modeled after the CRM image) */}
+      {/* KPI Cards Row (Easy farmer-friendly metrics) */}
       <div className="crm-kpi-grid">
         <div className="crm-kpi-card kpi-royal">
           <div className="kpi-card-header">
@@ -2510,8 +2483,8 @@ function CrmAnalyticsView({ records, navigate, t, lang, onOpenChat }: CrmAnalyti
           </div>
           <div className="kpi-value">{count}</div>
           <div className="kpi-footer">
-            <span className="kpi-pill-badge">{lang === 'ta' ? 'கள சோதனைகள்' : 'Field Records'}</span>
-            <small>{hasUserRecords ? `${records.length} ${lang === 'ta' ? 'நேரலை' : 'live'}` : (lang === 'ta' ? 'மாதிரி பண்ணை' : 'Model Acreage')}</small>
+            <span className="kpi-pill-badge">{lang === 'ta' ? 'ஆய்வுகள்' : 'Field Scans'}</span>
+            <small>{hasUserRecords ? `${records.length} ${lang === 'ta' ? 'நேரலை' : 'live'}` : (lang === 'ta' ? 'மாதிரி பண்ணை' : 'Farm Scans')}</small>
           </div>
         </div>
 
@@ -2534,8 +2507,8 @@ function CrmAnalyticsView({ records, navigate, t, lang, onOpenChat }: CrmAnalyti
           </div>
           <div className="kpi-value">{recoveryRate}%</div>
           <div className="kpi-footer">
-            <span className="kpi-pill-badge">{lang === 'ta' ? 'குணமடையும்' : 'Treatable'}</span>
-            <small>{treatableCount} {lang === 'ta' ? 'பரிந்துரைகள்' : 'protocols'}</small>
+            <span className="kpi-pill-badge">{lang === 'ta' ? 'குணமடையும்' : 'Curable'}</span>
+            <small>{treatableCount} {lang === 'ta' ? 'பரிந்துரைகள்' : 'remedies'}</small>
           </div>
         </div>
 
@@ -2546,8 +2519,8 @@ function CrmAnalyticsView({ records, navigate, t, lang, onOpenChat }: CrmAnalyti
           </div>
           <div className="kpi-value">{avgAccuracy}%</div>
           <div className="kpi-footer">
-            <span className="kpi-pill-badge positive">{lang === 'ta' ? 'துல்லிய குறியீடு' : 'Confidence'}</span>
-            <small>Qwen 3.8 Vision</small>
+            <span className="kpi-pill-badge positive">{lang === 'ta' ? 'துல்லியம்' : 'Accuracy'}</span>
+            <small>{lang === 'ta' ? 'AI பரிசோதனை' : 'AI Testing'}</small>
           </div>
         </div>
 
@@ -2559,7 +2532,7 @@ function CrmAnalyticsView({ records, navigate, t, lang, onOpenChat }: CrmAnalyti
           <div className="kpi-value">{pathogenRate}%</div>
           <div className="kpi-footer">
             <span className="kpi-pill-badge warning">{sickCount} {lang === 'ta' ? 'பாதிப்புகள்' : 'cases'}</span>
-            <small>{lang === 'ta' ? 'கண்காணிப்பில்' : 'Under Monitoring'}</small>
+            <small>{lang === 'ta' ? 'கண்காணிப்பில்' : 'Need Attention'}</small>
           </div>
         </div>
 
@@ -2571,7 +2544,7 @@ function CrmAnalyticsView({ records, navigate, t, lang, onOpenChat }: CrmAnalyti
           <div className="kpi-value">{severeRate}%</div>
           <div className="kpi-footer">
             <span className="kpi-pill-badge">{severeCount} {lang === 'ta' ? 'அவசர நிலை' : 'critical'}</span>
-            <small>{lang === 'ta' ? 'உடனடி சிகிச்சை' : 'Priority Action'}</small>
+            <small>{lang === 'ta' ? 'உடனடி சிகிச்சை' : 'Quick Action'}</small>
           </div>
         </div>
       </div>
@@ -2861,7 +2834,7 @@ function CrmAnalyticsView({ records, navigate, t, lang, onOpenChat }: CrmAnalyti
                     100%
                   </text>
                   <text x="100" y="112" textAnchor="middle" fill="var(--muted)" fontSize="10" fontWeight="700">
-                    {lang === 'ta' ? 'ஆய்வு முடிவு' : 'DIAGNOSED'}
+                    {lang === 'ta' ? 'பயிர்கள்' : 'CROPS'}
                   </text>
                 </svg>
               </div>
@@ -2892,7 +2865,7 @@ function CrmAnalyticsView({ records, navigate, t, lang, onOpenChat }: CrmAnalyti
             <div className="panel-card-head">
               <div>
                 <h3>{t.etiologyStressDonut}</h3>
-                <small>{lang === 'ta' ? 'காரணிகள்: பூஞ்சை, பாக்டீரியா, வைரஸ், ஊட்டச்சத்து' : 'Biological etiology & nutritional stress vectors'}</small>
+                <small>{lang === 'ta' ? 'பூஞ்சை, பாக்டீரியா, வைரஸ், சத்து குறைபாடு போன்ற காரணங்கள்' : 'Main causes: fungus, bacteria, virus, or nutrient shortage'}</small>
               </div>
             </div>
 
@@ -2902,10 +2875,10 @@ function CrmAnalyticsView({ records, navigate, t, lang, onOpenChat }: CrmAnalyti
                   {renderDonutArcs(etiologySegments)}
                   <circle cx="100" cy="100" r="54" fill="var(--card)" />
                   <text x="100" y="96" textAnchor="middle" fill="var(--ink)" fontSize="18" fontWeight="800">
-                    5 {lang === 'ta' ? 'காரணிகள்' : 'Vectors'}
+                    5 {lang === 'ta' ? 'காரணங்கள்' : 'Causes'}
                   </text>
                   <text x="100" y="112" textAnchor="middle" fill="var(--muted)" fontSize="10" fontWeight="700">
-                    {lang === 'ta' ? 'காரணிகள்' : 'ETIOLOGY'}
+                    {lang === 'ta' ? 'காரணங்கள்' : 'CAUSES'}
                   </text>
                 </svg>
               </div>
@@ -2928,56 +2901,6 @@ function CrmAnalyticsView({ records, navigate, t, lang, onOpenChat }: CrmAnalyti
                   </div>
                 ))}
               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column: Visual AI Reasoning & Agronomist Diagnostic Intelligence */}
-        <div className="crm-col-reasoning">
-          <div className="crm-panel-card reasoning-panel">
-            <div className="panel-card-head">
-              <div>
-                <span className="eyebrow">{lang === 'ta' ? 'AI காட்சி தர்க்கம்' : 'AI VISUAL LOGIC'}</span>
-                <h3>{t.visualReasoningTitle}</h3>
-                <small>{t.visualReasoningSub}</small>
-              </div>
-            </div>
-
-            <div className="reasoning-cases-list">
-              {reasoningCases.map((rc, idx) => (
-                <div key={idx} className="reasoning-case-card">
-                  <div className="case-card-top">
-                    <span className="case-crop-badge" style={{ borderColor: rc.badgeColor, color: rc.badgeColor }}>
-                      {rc.crop}
-                    </span>
-                    <span className="case-confidence-pill">
-                      {rc.confidence}% {lang === 'ta' ? 'பொருத்தம்' : 'match'}
-                    </span>
-                  </div>
-
-                  <h4>{rc.title}</h4>
-                  <p className="case-symptom-text">{rc.symptom}</p>
-
-                  <div className="case-etiology-bar">
-                    <strong>{lang === 'ta' ? 'காரணி:' : 'Identified Vector:'}</strong> <span>{rc.etiology}</span>
-                  </div>
-
-                  <div className="case-action-box">
-                    <strong>{lang === 'ta' ? 'செயல் திட்டம்:' : 'Prescription:'}</strong>
-                    <p>{rc.action}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="reasoning-footer-action">
-              <button
-                type="button"
-                className="reasoning-scan-btn"
-                onClick={() => navigate('scan')}
-              >
-                <ScanLine size={16} /> {lang === 'ta' ? 'புதிய பயிர் ஆய்வு செய்க' : 'Run New Crop Scan'}
-              </button>
             </div>
           </div>
         </div>
