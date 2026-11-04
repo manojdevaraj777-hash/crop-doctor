@@ -500,7 +500,6 @@ function App() {
   const [diagnosis, setDiagnosis] = useState<Diagnosis | null>(null)
   const [selectedRecord, setSelectedRecord] = useState<DiagnosticRecord | null>(null)
   const [records, setRecords] = useState<DiagnosticRecord[]>([])
-  const [selectedCrop, setSelectedCrop] = useState<string>('auto')
   const [status, setStatus] = useState<'idle' | 'analyzing' | 'error'>('idle')
   const [error, setError] = useState('')
   const [isDragging, setIsDragging] = useState(false)
@@ -526,7 +525,6 @@ function App() {
     setDiagnosis(null)
     setSelectedRecord(null)
     setRecords([])
-    setSelectedCrop('auto')
     setStatus('idle')
     setError('')
     setChatMessages([])
@@ -624,7 +622,7 @@ function App() {
 
       const data = new FormData()
       data.append('image', file)
-      data.append('crop', selectedCrop === 'auto' ? 'unknown' : selectedCrop)
+      data.append('crop', 'auto')
       data.append('lang', lang)
       const response = await fetch('/api/diagnose', { method: 'POST', body: data })
       const result = await response.json().catch(() => ({}))
@@ -708,8 +706,6 @@ function App() {
             uploadInputRef={uploadInputRef}
             cameraInputRef={cameraInputRef}
             navigate={navigate}
-            selectedCrop={selectedCrop}
-            setSelectedCrop={setSelectedCrop}
             t={t}
             lang={lang}
           />
@@ -1053,8 +1049,6 @@ function ScanView({
   uploadInputRef,
   cameraInputRef,
   navigate,
-  selectedCrop,
-  setSelectedCrop,
   t,
   lang
 }: {
@@ -1070,8 +1064,6 @@ function ScanView({
   uploadInputRef: RefObject<HTMLInputElement | null>;
   cameraInputRef: RefObject<HTMLInputElement | null>;
   navigate: (page: Page) => void;
-  selectedCrop: string;
-  setSelectedCrop: (crop: string) => void;
   t: typeof translations['en'];
   lang: Language;
 }) { 
@@ -1160,48 +1152,32 @@ function ScanView({
 
           <div className="crop-selector-bar">
             <div className="crop-selector-header">
-              <label htmlFor="crop-select" className="crop-selector-label">
+              <div className="auto-detect-tag">
                 <Sprout size={16} style={{ color: 'var(--green)', flexShrink: 0 }} />
-                <span>{t.plantType}</span>
-              </label>
+                <span>{lang === 'ta' ? 'அனைத்து பயிர்களும் AI மூலம் தானாக கண்டறியப்படும்' : 'AI Auto-Detects Any Plant from Photo'}</span>
+              </div>
               <button
                 type="button"
                 className="browse-plants-btn"
                 onClick={() => setShowPlantGuide(true)}
-                title="Explore visual guides and characteristics for plant types"
+                title="View plant identification guides and common crop diseases"
               >
                 <BookOpen size={14} style={{ flexShrink: 0 }} />
                 <span>{t.plantTypesGuide}</span>
               </button>
             </div>
-            <div className="crop-select-wrapper">
-              <select
-                id="crop-select"
-                value={selectedCrop}
-                onChange={(e) => setSelectedCrop(e.target.value)}
-                className="crop-select"
-              >
-                <option value="auto">{t.autoDetectPlant}</option>
-                <optgroup label={lang === 'ta' ? 'தானியப் பயிர்கள்' : 'Cereal & Grain Crops'}>
-                  <option value="Maize (Corn)">{lang === 'ta' ? '🌽 மக்காச்சோளம் - Maize (Corn)' : '🌽 Maize (Corn)'}</option>
-                  <option value="Rice (Paddy)">{lang === 'ta' ? '🌾 நெல் - Rice (Paddy)' : '🌾 Rice (Paddy)'}</option>
-                  <option value="Pearl Millet (Bajra)">{lang === 'ta' ? '🌾 கம்பு - Pearl Millet (Bajra)' : '🌾 Pearl Millet (Bajra)'}</option>
-                  <option value="Wheat">{lang === 'ta' ? '🌾 கோதுமை - Wheat' : '🌾 Wheat'}</option>
-                  <option value="Sorghum (Jowar)">{lang === 'ta' ? '🌾 சோளம் - Sorghum (Jowar)' : '🌾 Sorghum (Jowar)'}</option>
-                  <option value="Finger Millet (Ragi)">{lang === 'ta' ? '🌾 கேழ்வரகு / ராகி - Finger Millet (Ragi)' : '🌾 Finger Millet (Ragi)'}</option>
-                  <option value="Barley">{lang === 'ta' ? '🌾 பார்லி - Barley' : '🌾 Barley'}</option>
-                </optgroup>
-                <optgroup label={lang === 'ta' ? 'காய்கறி & பணப்பயிர்கள்' : 'Vegetables & Cash Crops'}>
-                  <option value="Tomato">{lang === 'ta' ? '🍅 தக்காளி - Tomato' : '🍅 Tomato'}</option>
-                  <option value="Potato">{lang === 'ta' ? '🥔 உருளைக்கிழங்கு - Potato' : '🥔 Potato'}</option>
-                  <option value="Chili / Pepper">{lang === 'ta' ? '🌶️ மிளகாய் - Chili / Pepper' : '🌶️ Chili / Pepper'}</option>
-                  <option value="Cotton">{lang === 'ta' ? '🌿 பருத்தி - Cotton' : '🌿 Cotton'}</option>
-                  <option value="Sugarcane">{lang === 'ta' ? '🎋 கரும்பு - Sugarcane' : '🎋 Sugarcane'}</option>
-                  <option value="Soybean">{lang === 'ta' ? '🌱 சோயாபீன் - Soybean' : '🌱 Soybean'}</option>
-                  <option value="Groundnut (Peanut)">{lang === 'ta' ? '🥜 நிலக்கடலை - Groundnut (Peanut)' : '🥜 Groundnut (Peanut)'}</option>
-                  <option value="Onion">{lang === 'ta' ? '🧅 வெங்காயம் - Onion' : '🧅 Onion'}</option>
-                </optgroup>
-              </select>
+            <div className="supported-crops-pills">
+              <span className="crop-mini-pill">🌽 {lang === 'ta' ? 'மக்காச்சோளம்' : 'Maize'}</span>
+              <span className="crop-mini-pill">🌾 {lang === 'ta' ? 'நெல்' : 'Rice'}</span>
+              <span className="crop-mini-pill">🌾 {lang === 'ta' ? 'கம்பு' : 'Bajra'}</span>
+              <span className="crop-mini-pill">🌾 {lang === 'ta' ? 'சோளம்' : 'Sorghum'}</span>
+              <span className="crop-mini-pill">🌾 {lang === 'ta' ? 'கோதுமை' : 'Wheat'}</span>
+              <span className="crop-mini-pill">🍅 {lang === 'ta' ? 'தக்காளி' : 'Tomato'}</span>
+              <span className="crop-mini-pill">🥔 {lang === 'ta' ? 'உருளை' : 'Potato'}</span>
+              <span className="crop-mini-pill">🌶️ {lang === 'ta' ? 'மிளகாய்' : 'Chili'}</span>
+              <span className="crop-mini-pill">🌿 {lang === 'ta' ? 'பருத்தி' : 'Cotton'}</span>
+              <span className="crop-mini-pill">🎋 {lang === 'ta' ? 'கரும்பு' : 'Sugarcane'}</span>
+              <span className="crop-mini-pill">+ {lang === 'ta' ? 'அனைத்து பயிர்களும்' : 'All Plants'}</span>
             </div>
           </div>
 
@@ -1290,39 +1266,7 @@ function ScanView({
               <i />{status === 'analyzing' ? t.analyzing : diagnosis ? 'Done' : 'Waiting'}
             </span>
           </div>
-          {diagnosis?.cropMismatch && (
-            <div className="crop-mismatch-banner">
-              <AlertTriangle size={20} className="mismatch-icon" />
-              <div className="mismatch-text">
-                <strong>{lang === 'ta' ? '⚠️ பயிர் வகை முரண்பாடு கண்டறியப்பட்டது' : '⚠️ Crop Mismatch Detected'}</strong>
-                <p>
-                  {diagnosis.mismatchMessage || (lang === 'ta'
-                    ? `நீங்கள் '${diagnosis.specifiedCrop}' என்று தேர்ந்தெடுத்தீர்கள், ஆனால் புகைப்படத்தில் இருப்பது '${diagnosis.detectedCrop || diagnosis.crop}'. துல்லியமான மருத்துவத்திற்காக '${diagnosis.detectedCrop || diagnosis.crop}' பயிராக ஆய்வு செய்யப்பட்டுள்ளது.`
-                    : `You selected '${diagnosis.specifiedCrop}', but our AI visual analysis detected this is '${diagnosis.detectedCrop || diagnosis.crop}'. We diagnosed it as '${diagnosis.detectedCrop || diagnosis.crop}' for agricultural accuracy.`
-                  )}
-                </p>
-                {diagnosis.detectedCrop && (
-                  <button
-                    type="button"
-                    className="sync-crop-btn"
-                    onClick={() => {
-                      const match = SUPPORTED_PLANTS.find(p =>
-                        diagnosis.detectedCrop?.toLowerCase().includes(p.name.toLowerCase()) ||
-                        p.name.toLowerCase().includes(diagnosis.detectedCrop?.toLowerCase() || '')
-                      );
-                      if (match) {
-                        setSelectedCrop(match.name);
-                      } else {
-                        setSelectedCrop('auto');
-                      }
-                    }}
-                  >
-                    {lang === 'ta' ? `பயிர் தேர்வை '${diagnosis.detectedCrop}' ஆக மாற்று` : `Sync Dropdown to '${diagnosis.detectedCrop}'`}
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
+
           <div className="result-content">
             <div className="result-head">
               <div>
@@ -1335,7 +1279,7 @@ function ScanView({
                 <small>{t.plantType.replace(':', '')}</small>
                 <strong>
                   <Sprout size={14} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '4px', color: 'var(--green)' }} />
-                  {diagnosis?.crop ?? (selectedCrop !== 'auto' ? selectedCrop : '—')}
+                  {diagnosis?.crop || '—'}
                 </strong>
               </span>
               <span><small>{t.diagnosticAccuracy}</small><strong>{confidence ? `${confidence}%` : '—'}</strong></span>
@@ -1467,7 +1411,7 @@ function ScanView({
 
             <div className="plant-guide-grid">
               {SUPPORTED_PLANTS.map((plant) => (
-                <div key={plant.name} className={`plant-card ${selectedCrop === plant.name ? 'selected' : ''}`}>
+                <div key={plant.name} className="plant-card">
                   <div className="plant-card-head">
                     <span className="plant-card-icon">{plant.icon}</span>
                     <div className="plant-card-title-group">
@@ -1497,16 +1441,7 @@ function ScanView({
                     </div>
                   </div>
 
-                  <button
-                    type="button"
-                    className={`select-plant-action ${selectedCrop === plant.name ? 'is-active' : ''}`}
-                    onClick={() => {
-                      setSelectedCrop(plant.name);
-                      setShowPlantGuide(false);
-                    }}
-                  >
-                    {selectedCrop === plant.name ? <><Check size={14} /> {t.selectedForScan}</> : t.selectThisPlant}
-                  </button>
+
                 </div>
               ))}
             </div>

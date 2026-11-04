@@ -3762,3 +3762,42 @@ body.dark-mode .crop-mismatch-banner {
 .sync-crop-btn:hover {
   background: #c5602e;
 }
+
+/* Auto-detect tag & crop mini pills */
+.auto-detect-tag {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+body.dark-mode .auto-detect-tag {
+  color: #fff;
+}
+
+.supported-crops-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding-top: 2px;
+}
+
+.crop-mini-pill {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 12px;
+  background: white;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+body.dark-mode .crop-mini-pill {
+  background: #0d1e16;
+  border-color: #264a36;
+  color: #d8e5dc;
+}
