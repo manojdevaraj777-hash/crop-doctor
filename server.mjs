@@ -366,6 +366,12 @@ Carefully look at the plant features in this photo:
    -> This is RICE / PADDY (${isTamil ? 'நெல்' : 'Rice / Paddy'}, Oryza sativa).
 4. If you see a spherical or pyramidal head of round grains at the stalk apex:
    -> This is SORGHUM / JOWAR (${isTamil ? 'சோளம்' : 'Sorghum / Jowar'}).
+5. POTATO VS TOMATO DISTINCTION (CRITICAL):
+   - If this is a POTATO leaf or plant (pinnate compound leaf with broad ovate terminal leaflets, or early/late blight on potato):
+     -> You MUST identify the crop as POTATO (${isTamil ? 'உருளைக்கிழங்கு (Potato)' : 'Potato'}, Solanum tuberosum).
+     -> In the "summary", "cause", and "actions", refer EXCLUSIVELY to POTATO leaves. You MUST NEVER say "tomato leaves" or "tomato" when describing a potato leaf!
+   - If this is a TOMATO leaf (irregularly deeply lobed, serrated leaflets with characteristic glandular hairs):
+     -> Identify as TOMATO (${isTamil ? 'தக்காளி (Tomato)' : 'Tomato'}).
 
 Analyze this crop photo, identify the exact plant type using these strict rules, assess its health, and provide practical actions.${isTamil ? ' Provide all response text in Tamil.' : ''}`
 
@@ -415,20 +421,37 @@ Analyze this crop photo, identify the exact plant type using these strict rules,
     const cleanFilename = (request.file?.originalname || '').toLowerCase()
     let combinedText = (finalCrop + ' ' + (result.summary || '') + ' ' + (result.cause || '') + ' ' + cleanFilename).toLowerCase()
 
-    // 1. Potato (உருளைக்கிழங்கு) Safeguard - NEVER allow potato to be translated as 'கத்தரிக்காய்' (Brinjal)
+    // 1. Potato (உருளைக்கிழங்கு) Safeguard - NEVER allow potato to be called 'tomato' or 'கத்தரிக்காய்'
     const isPotato = /potato|aloo|tuberosum|crop-6/i.test(cleanFilename) || /potato|tuberosum/i.test(finalCrop) || combinedText.includes('potato')
     if (isPotato) {
       finalCrop = isTamil ? 'உருளைக்கிழங்கு (Potato)' : 'Potato'
       result.crop = finalCrop
-      if (result.summary) {
-        result.summary = result.summary
+
+      const sanitizePotatoText = (str) => {
+        if (!str || typeof str !== 'string') return str
+        return str
+          .replace(/tomato leaves/gi, 'potato leaves')
+          .replace(/tomato leaf/gi, 'potato leaf')
+          .replace(/tomato plants/gi, 'potato plants')
+          .replace(/tomato plant/gi, 'potato plant')
+          .replace(/tomato foliage/gi, 'potato foliage')
+          .replace(/tomato crop/gi, 'potato crop')
+          .replace(/tomatoes/gi, 'potatoes')
+          .replace(/\btomato\b/gi, 'potato')
+          .replace(/தக்காளி இலைகள்/g, 'உருளைக்கிழங்கு இலைகள்')
+          .replace(/தக்காளி செடிகள்/g, 'உருளைக்கிழங்கு செடிகள்')
+          .replace(/தக்காளி/g, 'உருளைக்கிழங்கு')
           .replace(/கத்தரிக்காய் \(Potato\)|கத்தரிக்காய் செடிகள்|கத்தரிக்காய்/g, 'உருளைக்கிழங்கு')
           .replace(/Brinjal|Eggplant/gi, 'Potato')
       }
-      if (result.cause) {
-        result.cause = result.cause
-          .replace(/கத்தரிக்காய் \(Potato\)|கத்தரிக்காய் செடிகள்|கத்தரிக்காய்/g, 'உருளைக்கிழங்கு')
-          .replace(/Brinjal|Eggplant/gi, 'Potato')
+
+      if (result.summary) result.summary = sanitizePotatoText(result.summary)
+      if (result.cause) result.cause = sanitizePotatoText(result.cause)
+      if (Array.isArray(result.actions)) {
+        result.actions = result.actions.map(sanitizePotatoText)
+      }
+      if (Array.isArray(result.treatmentSteps)) {
+        result.treatmentSteps = result.treatmentSteps.map(sanitizePotatoText)
       }
     }
 

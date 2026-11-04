@@ -70,6 +70,14 @@ const translations = {
     latestCrop: 'Latest Crop',
     healthCondition: 'Health Condition',
     averageAccuracy: 'Diagnostic Accuracy',
+    cropHealthCrm: 'CROP HEALTH CRM DASHBOARD',
+    healthSpeedometer: 'Crop Health Speedometer Index',
+    healthyZone: 'Healthy',
+    goodZone: 'Good',
+    moderateZone: 'Moderate / OK',
+    badZone: 'Bad / Critical',
+    overallFarmHealth: 'Farm Health Index',
+    healthZonesTitle: 'Health Condition Zones',
     quickAnalysis: 'QUICK ANALYSIS',
     heroWelcome: 'Welcome',
     heroDesc: 'Check on your plants, catch sickness early, and review treatment guides.',
@@ -187,6 +195,14 @@ const translations = {
     latestCrop: 'சமீபத்திய பயிர்',
     healthCondition: 'பயிர் நிலைமை',
     averageAccuracy: 'சராசரி துல்லியம்',
+    cropHealthCrm: 'பயிர் நலம் CRM டாஷ்போர்டு',
+    healthSpeedometer: 'பயிர் சுகாதார வேகமானி குறியீடு',
+    healthyZone: 'ஆரோக்கியமானது',
+    goodZone: 'நன்று',
+    moderateZone: 'மிதமான பாதிப்பு',
+    badZone: 'கடுமையான பாதிப்பு',
+    overallFarmHealth: 'பண்ணை நலம் குறியீடு',
+    healthZonesTitle: 'சுகாதார நிலைகள்',
     quickAnalysis: 'விரைவு ஆய்வு',
     heroWelcome: 'வணக்கம்',
     heroDesc: 'உங்கள் பயிர்களைக் கண்காணிக்கவும், நோய்களை முன்கூட்டியே கண்டறிந்து சிகிச்சை பெறவும்.',
@@ -691,7 +707,7 @@ function App() {
         </button>
       </div>
       <div className="content">
-        {page === 'overview' && <Overview name={session.name} records={records} navigate={navigate} t={t} />}
+        {page === 'overview' && <Overview name={session.name} records={records} navigate={navigate} t={t} lang={lang} />}
         {page === 'scan' && (
           <ScanView
             file={file}
@@ -808,7 +824,157 @@ function App() {
     {page === 'scan' && file && <button className="remove-image" type="button" onClick={() => window.dispatchEvent(new Event('cropdoctor:remove-image'))}><X size={14} /> {t.removeImage}</button>}<button className="chat-launcher" onClick={() => setChatOpen(!chatOpen)}><MessageCircle size={18} /> {t.fieldAssistant}</button></div>
 }
 
-function Overview({ name, records, navigate, t }: { name: string; records: DiagnosticRecord[]; navigate: (page: Page) => void; t: typeof translations['en'] }) {
+
+function calculateHealthScore(diag?: Diagnosis | DiagnosticRecord | null): { score: number; zone: 'healthy' | 'good' | 'moderate' | 'bad'; label: string; color: string; badgeBg: string } {
+  if (!diag) {
+    return { score: 95, zone: 'healthy', label: 'Healthy', color: '#10b981', badgeBg: 'rgba(16, 185, 129, 0.18)' };
+  }
+  const disease = (diag.disease || '').toLowerCase();
+  const severity = (diag.severity || '').toLowerCase();
+  
+  if (disease.includes('healthy') || disease.includes('ஆரோக்கிய') || severity === 'low') {
+    return { score: 95, zone: 'healthy', label: 'Healthy', color: '#10b981', badgeBg: 'rgba(16, 185, 129, 0.18)' };
+  }
+  if (severity === 'moderate' || disease.includes('mild') || diag.treatable) {
+    if (disease.includes('blight') || disease.includes('rot') || disease.includes('rust') || severity === 'high') {
+      return { score: 55, zone: 'moderate', label: 'Moderate / OK', color: '#f59e0b', badgeBg: 'rgba(245, 158, 11, 0.18)' };
+    }
+    return { score: 76, zone: 'good', label: 'Good', color: '#84cc16', badgeBg: 'rgba(132, 204, 22, 0.18)' };
+  }
+  if (severity === 'high' || severity === 'critical' || diag.treatable === false) {
+    return { score: 28, zone: 'bad', label: 'Bad / Critical', color: '#ef4444', badgeBg: 'rgba(239, 68, 68, 0.18)' };
+  }
+  return { score: 58, zone: 'moderate', label: 'Moderate / OK', color: '#f59e0b', badgeBg: 'rgba(245, 158, 11, 0.18)' };
+}
+
+function SpeedometerGauge({
+  score,
+  size = 200,
+  showLabel = true,
+  zoneLabel = ''
+}: {
+  score: number;
+  size?: number;
+  showLabel?: boolean;
+  zoneLabel?: string;
+}) {
+  const clamped = Math.max(0, Math.min(100, score));
+  const needleAngle = -90 + (clamped / 100) * 180;
+  const arcLength = Math.PI * 72; // ~226.19
+
+  return (
+    <div className="speedometer-container" style={{ width: size, height: size * 0.62 }}>
+      <svg viewBox="0 0 200 120" className="speedometer-svg">
+        <defs>
+          <linearGradient id="badGrad" x1="0%" y1="100%" x2="50%" y2="0%">
+            <stop offset="0%" stopColor="#ef4444" />
+            <stop offset="100%" stopColor="#f87171" />
+          </linearGradient>
+          <linearGradient id="modGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#f59e0b" />
+            <stop offset="100%" stopColor="#fbbf24" />
+          </linearGradient>
+          <linearGradient id="goodGrad" x1="0%" y1="0%" x2="100%" y2="50%">
+            <stop offset="0%" stopColor="#84cc16" />
+            <stop offset="100%" stopColor="#a3e635" />
+          </linearGradient>
+          <linearGradient id="healthGrad" x1="50%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#10b981" />
+            <stop offset="100%" stopColor="#34d399" />
+          </linearGradient>
+        </defs>
+
+        {/* Gray Track Background */}
+        <path
+          d="M 28 98 A 72 72 0 0 1 172 98"
+          fill="none"
+          stroke="rgba(255, 255, 255, 0.12)"
+          strokeWidth="14"
+          strokeLinecap="round"
+        />
+
+        {/* 4 Colored Speedometer Segments */}
+        {/* Bad: 0% to 38% */}
+        <path
+          d="M 28 98 A 72 72 0 0 1 172 98"
+          fill="none"
+          stroke="url(#badGrad)"
+          strokeWidth="12"
+          strokeDasharray={`${arcLength * 0.38} ${arcLength}`}
+          strokeDashoffset="0"
+          strokeLinecap="round"
+        />
+        {/* Moderate: 38% to 68% */}
+        <path
+          d="M 28 98 A 72 72 0 0 1 172 98"
+          fill="none"
+          stroke="url(#modGrad)"
+          strokeWidth="12"
+          strokeDasharray={`${arcLength * 0.30} ${arcLength}`}
+          strokeDashoffset={`-${arcLength * 0.38}`}
+        />
+        {/* Good: 68% to 84% */}
+        <path
+          d="M 28 98 A 72 72 0 0 1 172 98"
+          fill="none"
+          stroke="url(#goodGrad)"
+          strokeWidth="12"
+          strokeDasharray={`${arcLength * 0.16} ${arcLength}`}
+          strokeDashoffset={`-${arcLength * 0.68}`}
+        />
+        {/* Healthy: 84% to 100% */}
+        <path
+          d="M 28 98 A 72 72 0 0 1 172 98"
+          fill="none"
+          stroke="url(#healthGrad)"
+          strokeWidth="12"
+          strokeDasharray={`${arcLength * 0.16} ${arcLength}`}
+          strokeDashoffset={`-${arcLength * 0.84}`}
+          strokeLinecap="round"
+        />
+
+        {/* Zone Labels on Gauge */}
+        <text x="24" y="115" fill="#ef4444" fontSize="8" fontWeight="800" textAnchor="middle">BAD</text>
+        <text x="68" y="24" fill="#f59e0b" fontSize="8" fontWeight="800" textAnchor="middle">OK</text>
+        <text x="132" y="24" fill="#84cc16" fontSize="8" fontWeight="800" textAnchor="middle">GOOD</text>
+        <text x="176" y="115" fill="#10b981" fontSize="8" fontWeight="800" textAnchor="middle">HEALTHY</text>
+
+        {/* Animated Needle */}
+        <g
+          style={{
+            transform: `rotate(${needleAngle}deg)`,
+            transformOrigin: '100px 98px',
+            transition: 'transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)'
+          }}
+        >
+          <line
+            x1="100"
+            y1="98"
+            x2="100"
+            y2="34"
+            stroke="#ffffff"
+            strokeWidth="3.5"
+            strokeLinecap="round"
+          />
+          <circle cx="100" cy="36" r="3.5" fill="#ffffff" />
+        </g>
+
+        {/* Center Hub */}
+        <circle cx="100" cy="98" r="9" fill="#14261c" stroke="#ffffff" strokeWidth="2.5" />
+        <circle cx="100" cy="98" r="4" fill="#10b981" />
+      </svg>
+
+      {showLabel && (
+        <div className="speedometer-score-display">
+          <span className="score-number">{clamped}%</span>
+          {zoneLabel && <span className="score-zone-badge">{zoneLabel}</span>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Overview({ name, records, navigate, t, lang }: { name: string; records: DiagnosticRecord[]; navigate: (page: Page) => void; t: typeof translations['en']; lang: Language }) {
   const latest = records[0];
   return (
     <>
@@ -845,6 +1011,78 @@ function Overview({ name, records, navigate, t }: { name: string; records: Diagn
           <strong>{latest ? `${latest.confidence}%` : '—'}</strong>
         </div>
       </div>
+
+      {/* CRM Health Speedometer Dashboard Widget */}
+      {(() => {
+        const farmHealth = calculateHealthScore(latest);
+        const healthyCount = records.filter(r => (r.disease || '').toLowerCase().includes('healthy') || (r.severity || '').toLowerCase() === 'low').length;
+        const moderateCount = records.filter(r => (r.severity || '').toLowerCase() === 'moderate' || (r.treatable && !(r.disease || '').toLowerCase().includes('healthy'))).length;
+        const criticalCount = records.filter(r => (r.severity || '').toLowerCase() === 'high' || r.treatable === false).length;
+
+        const zoneName = lang === 'ta'
+          ? (farmHealth.zone === 'healthy' ? t.healthyZone : farmHealth.zone === 'good' ? t.goodZone : farmHealth.zone === 'moderate' ? t.moderateZone : t.badZone)
+          : farmHealth.label;
+
+        return (
+          <section className="health-speedometer-card">
+            <div className="speedometer-card-head">
+              <div>
+                <span className="eyebrow">{t.cropHealthCrm}</span>
+                <h3>{t.healthSpeedometer}</h3>
+              </div>
+              <div className="speedometer-pill" style={{ color: farmHealth.color, borderColor: farmHealth.color, background: farmHealth.badgeBg }}>
+                <i style={{ background: farmHealth.color }} /> {zoneName}
+              </div>
+            </div>
+
+            <div className="speedometer-card-body">
+              <div className="speedometer-visual-col">
+                <SpeedometerGauge score={farmHealth.score} size={220} showLabel={true} zoneLabel={zoneName} />
+              </div>
+
+              <div className="speedometer-metrics-col">
+                <div className="speedometer-legend-grid">
+                  <div className={`legend-card ${farmHealth.zone === 'healthy' ? 'active-zone' : ''}`} style={{ borderColor: '#10b981' }}>
+                    <div className="legend-card-header">
+                      <span className="legend-dot" style={{ background: '#10b981' }} />
+                      <strong>{t.healthyZone}</strong>
+                    </div>
+                    <span className="legend-range">85% – 100%</span>
+                    <small className="legend-count">{healthyCount} {lang === 'ta' ? 'ஆய்வுகள்' : 'scans'}</small>
+                  </div>
+
+                  <div className={`legend-card ${farmHealth.zone === 'good' ? 'active-zone' : ''}`} style={{ borderColor: '#84cc16' }}>
+                    <div className="legend-card-header">
+                      <span className="legend-dot" style={{ background: '#84cc16' }} />
+                      <strong>{t.goodZone}</strong>
+                    </div>
+                    <span className="legend-range">70% – 84%</span>
+                    <small className="legend-count">{lang === 'ta' ? 'லேசான நிலை' : 'Mild Risk'}</small>
+                  </div>
+
+                  <div className={`legend-card ${farmHealth.zone === 'moderate' ? 'active-zone' : ''}`} style={{ borderColor: '#f59e0b' }}>
+                    <div className="legend-card-header">
+                      <span className="legend-dot" style={{ background: '#f59e0b' }} />
+                      <strong>{t.moderateZone}</strong>
+                    </div>
+                    <span className="legend-range">45% – 69%</span>
+                    <small className="legend-count">{moderateCount} {lang === 'ta' ? 'ஆய்வுகள்' : 'scans'}</small>
+                  </div>
+
+                  <div className={`legend-card ${farmHealth.zone === 'bad' ? 'active-zone' : ''}`} style={{ borderColor: '#ef4444' }}>
+                    <div className="legend-card-header">
+                      <span className="legend-dot" style={{ background: '#ef4444' }} />
+                      <strong>{t.badZone}</strong>
+                    </div>
+                    <span className="legend-range">0% – 44%</span>
+                    <small className="legend-count">{criticalCount} {lang === 'ta' ? 'ஆய்வுகள்' : 'scans'}</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      })()}
 
       <section className="field-strip">
         <div className="field-copy">
@@ -1285,6 +1523,18 @@ function ScanView({
                 <span className="muted-label">{t.diseaseFound}</span>
                 <h4>{diagnosis?.disease ?? t.noScanYet}</h4>
               </div>
+              {diagnosis && (() => {
+                const scanHealth = calculateHealthScore(diagnosis);
+                const zoneText = lang === 'ta'
+                  ? (scanHealth.zone === 'healthy' ? 'ஆரோக்கியம்' : scanHealth.zone === 'good' ? 'நன்று' : scanHealth.zone === 'moderate' ? 'மிதமான பாதிப்பு' : 'கடுமையான பாதிப்பு')
+                  : scanHealth.label;
+                return (
+                  <div className="mini-speedometer-badge" style={{ borderColor: scanHealth.color, background: scanHealth.badgeBg }}>
+                    <SpeedometerGauge score={scanHealth.score} size={80} showLabel={false} />
+                    <span style={{ color: scanHealth.color, fontWeight: 800, fontSize: '11px' }}>{zoneText}</span>
+                  </div>
+                );
+              })()}
             </div>
             <div className="result-facts">
               <span>
