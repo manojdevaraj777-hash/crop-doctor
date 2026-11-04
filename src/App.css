@@ -3985,3 +3985,566 @@ body.dark-mode .legend-card {
   flex-shrink: 0;
   gap: 2px;
 }
+
+/* ========================================================
+   CRM Graphical Visual Reasoning & Analytics Styles
+======================================================== */
+.crm-dashboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 50px;
+}
+
+.crm-top-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 8px;
+}
+
+.crm-title-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.crm-badge-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+  flex-shrink: 0;
+}
+
+.crm-title-group h2 {
+  margin: 2px 0 0;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.5px;
+}
+
+.crm-subtitle-copy {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+  max-width: 600px;
+}
+
+.crm-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.crm-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.crm-action-btn.primary {
+  background: var(--green);
+  color: #fff;
+}
+
+.crm-action-btn.primary:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 4px 12px rgba(46, 105, 75, 0.25);
+}
+
+.crm-action-btn.secondary {
+  background: var(--card);
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.crm-action-btn.secondary:hover {
+  border-color: var(--green);
+  color: var(--green);
+}
+
+/* KPI Gradient Cards */
+.crm-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 14px;
+}
+
+.crm-kpi-card {
+  padding: 18px;
+  border-radius: 14px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  min-height: 125px;
+}
+
+.crm-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.14);
+}
+
+.kpi-royal { background: linear-gradient(135deg, #3730a3 0%, #4f46e5 100%); }
+.kpi-indigo { background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%); }
+.kpi-cyan { background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%); }
+.kpi-teal { background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%); }
+.kpi-purple { background: linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%); }
+.kpi-emerald { background: linear-gradient(135deg, #047857 0%, #10b981 100%); }
+
+.kpi-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.9;
+}
+
+.kpi-value {
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.kpi-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.kpi-pill-badge {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+}
+
+.kpi-pill-badge.positive { background: rgba(52, 211, 153, 0.3); }
+.kpi-pill-badge.warning { background: rgba(251, 191, 36, 0.3); }
+
+.kpi-footer small {
+  font-size: 11px;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+
+/* Filter Strip */
+.crm-filter-strip {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 12px 18px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.filter-pill-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.filter-pill {
+  padding: 4px 11px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 700;
+  transition: all 0.15s ease;
+}
+
+.filter-pill:hover {
+  border-color: var(--green);
+}
+
+.filter-pill.active {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(46, 105, 75, 0.2);
+}
+
+/* CRM Main Grid Layout */
+.crm-main-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr 0.95fr;
+  gap: 18px;
+  align-items: start;
+}
+
+@media (max-width: 1280px) {
+  .crm-main-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .crm-col-reasoning {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 860px) {
+  .crm-main-grid {
+    grid-template-columns: 1fr;
+  }
+  .crm-col-reasoning {
+    grid-column: span 1;
+  }
+}
+
+.crm-col-trends,
+.crm-col-donuts,
+.crm-col-reasoning {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.crm-panel-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.2s ease;
+}
+
+body.dark-mode .crm-panel-card {
+  background: #112017;
+  border-color: #224230;
+}
+
+.panel-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 10px;
+}
+
+body.dark-mode .panel-card-head {
+  border-bottom-color: #224230;
+}
+
+.panel-card-head h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.panel-card-head small {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.chart-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.chart-legend-item i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.svg-chart-container {
+  position: relative;
+  width: 100%;
+}
+
+.crm-trend-svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.trend-point {
+  cursor: pointer;
+  transition: transform 0.2s ease, r 0.2s ease;
+}
+
+.trend-point:hover {
+  r: 6.5;
+}
+
+.trend-tooltip-badge {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 6px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  z-index: 5;
+}
+
+/* Donut Chart Styling */
+.donut-body-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.donut-svg-holder {
+  flex: 0 0 150px;
+  display: grid;
+  place-items: center;
+}
+
+.crm-donut-svg {
+  width: 150px;
+  height: 150px;
+  transform: rotate(-90deg);
+}
+
+.crm-donut-svg text {
+  transform: rotate(90deg);
+  transform-origin: 100px 100px;
+}
+
+.donut-legend-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 150px;
+}
+
+.donut-legend-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+
+.donut-legend-row.active-row {
+  background: var(--paper);
+}
+
+.legend-label-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.legend-percent-pill {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 10px;
+  border: 1px solid currentColor;
+}
+
+/* Visual AI Reasoning Cases Panel */
+.reasoning-cases-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reasoning-case-card {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+body.dark-mode .reasoning-case-card {
+  background: #0d1e16;
+  border-color: #244230;
+}
+
+.case-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.case-crop-badge {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid currentColor;
+}
+
+.case-confidence-pill {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--green);
+}
+
+.reasoning-case-card h4 {
+  margin: 2px 0 0;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.case-symptom-text {
+  margin: 0;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.case-etiology-bar {
+  font-size: 11px;
+  color: var(--ink);
+  display: flex;
+  gap: 4px;
+  align-items: baseline;
+}
+
+.case-etiology-bar strong {
+  color: var(--muted);
+}
+
+.case-action-box {
+  background: rgba(16, 185, 129, 0.08);
+  border-left: 3px solid var(--green);
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.case-action-box strong {
+  display: block;
+  color: var(--green);
+  font-size: 10px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.case-action-box p {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.reasoning-footer-action {
+  margin-top: 14px;
+}
+
+.reasoning-scan-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  background: var(--green);
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 13px;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.reasoning-scan-btn:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 4px 14px rgba(46, 105, 75, 0.25);
+}
+
+/* CRM Link Button in Overview Speedometer Card */
+.crm-link-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--green);
+  background: rgba(46, 105, 75, 0.1);
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 800;
+  transition: all 0.2s ease;
+}
+
+.crm-link-button:hover {
+  background: var(--green);
+  color: #fff;
+}
