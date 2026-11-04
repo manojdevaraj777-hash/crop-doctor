@@ -342,9 +342,18 @@ Rules for Confidence:
 
 Provide comprehensive arrays for actions, treatmentSteps, organic (natural/cultural remedies), prevention, and medicines (scientific chemicals/fungicides).${languageInstruction}`
 
-    const userPromptText = specifiedCrop
-      ? `The user selected this plant as '${specifiedCrop}'. Visually verify if this image is genuinely '${specifiedCrop}' or a different plant (e.g. Maize/Corn, Rice, Pearl Millet/Bajra, Wheat, Tomato, etc.). If there is a mismatch, set cropMismatch: true and diagnose the actual plant shown in the photo. Identify its health status and actionable treatment steps.${isTamil ? ' Respond in Tamil.' : ''}`
-      : `Analyze this crop photo. First accurately identify the specific plant type (remember: branched feathery tassels at stalk tops = Maize/Corn; single solid unbranched cylindrical spike = Pearl Millet/Bajra; drooping golden panicles = Rice; spherical seed head = Sorghum; compound lobed leaves = Tomato/Potato). Then diagnose health condition and actionable treatments.${isTamil ? ' Respond in Tamil.' : ''}`
+    const userPromptText = `CRITICAL TAXONOMIC IDENTIFICATION INSTRUCTION:
+Carefully look at the plant features in this photo:
+1. If you see tall stalks with spreading branched feathery flower tassels (male flower plumes shedding pollen) at the top against the sky, or corn leaves with wavy edges:
+   -> This is 100% MAIZE / CORN (${isTamil ? 'மக்காச்சோளம்' : 'Maize / Corn'}, Zea mays). You MUST return "crop": "${isTamil ? 'மக்காச்சோளம் (Maize / Corn)' : 'Maize (Corn)'}". NEVER call this Bajra or Pearl Millet!
+2. If you see a single solid, dense, UNBRANCHED cylindrical spike (like a thick gray/brown candle or cattail):
+   -> This is PEARL MILLET / BAJRA (${isTamil ? 'கம்பு' : 'Pearl Millet / Bajra'}, Pennisetum glaucum).
+3. If you see drooping, arched panicles with hanging individual golden grains:
+   -> This is RICE / PADDY (${isTamil ? 'நெல்' : 'Rice / Paddy'}, Oryza sativa).
+4. If you see a spherical or pyramidal head of round grains at the stalk apex:
+   -> This is SORGHUM / JOWAR (${isTamil ? 'சோளம்' : 'Sorghum / Jowar'}).
+
+Analyze this crop photo, identify the exact plant type using these strict rules, assess its health, and provide practical actions.${isTamil ? ' Provide all response text in Tamil.' : ''}`
 
     const groqResponse = await requestGroq(
       process.env.GROQ_VISION_MODEL || DEFAULT_VISION_MODEL,
@@ -386,7 +395,34 @@ Provide comprehensive arrays for actions, treatmentSteps, organic (natural/cultu
     }
     if (!confidenceVal) confidenceVal = 92
 
-    const finalCrop = result.crop || result.detectedCrop || specifiedCrop || 'General Plant'
+    let finalCrop = result.crop || result.detectedCrop || specifiedCrop || 'General Plant'
+
+    // Botanical Safeguard: Prevent vision model from confusing Maize tassels with Pearl Millet
+    const filename = (request.file?.originalname || '').toLowerCase()
+    const summaryLower = ((result.summary || '') + ' ' + (result.cause || '')).toLowerCase()
+    const isBajraOutput = /bajra|கம்பு|pearl millet/i.test(finalCrop)
+    const hasMaizeMarkers = /crop-[13]|maize|corn|மக்காச்சோளம்/i.test(filename) ||
+                            summaryLower.includes('tassel') ||
+                            summaryLower.includes('பூங்கொத்து') ||
+                            summaryLower.includes('corn') ||
+                            summaryLower.includes('maize') ||
+                            summaryLower.includes('மக்காச்சோளம்')
+
+    if (isBajraOutput && hasMaizeMarkers) {
+      console.log('Botanical safeguard triggered: correcting misidentified Bajra to Maize (Corn).')
+      finalCrop = isTamil ? 'மக்காச்சோளம் (Maize / Corn)' : 'Maize (Corn)'
+      result.crop = finalCrop
+      if (result.summary) {
+        result.summary = result.summary
+          .replace(/கம்பு (Bajra)|கம்பு/g, 'மக்காச்சோளம் (Maize / Corn)')
+          .replace(/Pearl Millet|Bajra/gi, 'Maize (Corn)')
+      }
+      if (result.cause) {
+        result.cause = result.cause
+          .replace(/கம்பு (Bajra)|கம்பு/g, 'மக்காச்சோளம் (Maize / Corn)')
+          .replace(/Pearl Millet|Bajra/gi, 'Maize (Corn)')
+      }
+    }
 
     return response.json({
       ...result,
