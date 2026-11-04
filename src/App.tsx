@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import type { FormEvent, RefObject } from 'react'
-import { Activity, AlertTriangle, ArrowUpRight, Award, BarChart3, BookOpen, Calendar, Camera, Check, ChevronRight, CloudUpload, Download, Eye, FileText, Filter, History, Leaf, LeafyGreen, LoaderCircle, LogOut, Maximize2, Menu, MessageCircle, Minimize2, Moon, ScanLine, Send, Settings2, ShieldCheck, Sprout, Stethoscope, Sun, Trash2, TrendingUp, Upload, X, ZoomIn, ZoomOut } from 'lucide-react'
+import { Activity, AlertTriangle, ArrowUpRight, Award, BarChart3, BookOpen, Camera, Check, ChevronRight, CloudUpload, Download, Eye, FileText, History, Leaf, LeafyGreen, LoaderCircle, LogOut, Maximize2, Menu, MessageCircle, Minimize2, Moon, ScanLine, Send, Settings2, ShieldCheck, Sprout, Stethoscope, Sun, Trash2, TrendingUp, Upload, X, ZoomIn, ZoomOut } from 'lucide-react'
 import './App.css'
 
 type Diagnosis = { crop: string; disease: string; confidence: number; severity: string; treatable: boolean; summary: string; cause?: string; actions: string[]; treatmentSteps?: string[]; organic?: string[]; prevention?: string[]; medicines?: string[]; isDemo?: boolean; imageUrl?: string; cropMismatch?: boolean; specifiedCrop?: string; detectedCrop?: string; mismatchMessage?: string }
@@ -2251,50 +2251,27 @@ interface CrmAnalyticsViewProps {
 }
 
 function CrmAnalyticsView({ records, navigate, t, lang, onOpenChat }: CrmAnalyticsViewProps) {
-  const [selectedCrop, setSelectedCrop] = useState<string>('all');
-  const [timeHorizon, setTimeHorizon] = useState<'12m' | '6m' | '30d'>('12m');
-  const [severityFilter, setSeverityFilter] = useState<'all' | 'healthy' | 'infected'>('all');
   const [hoveredSlice, setHoveredSlice] = useState<string | null>(null);
   const [hoveredTrendPoint, setHoveredTrendPoint] = useState<{ label: string; healthy: number; sick: number } | null>(null);
 
-  // Filter records according to user controls
-  const filteredRecords = records.filter(r => {
-    if (selectedCrop !== 'all') {
-      const cropName = (r.crop || '').toLowerCase();
-      if (!cropName.includes(selectedCrop.toLowerCase())) return false;
-    }
-    if (severityFilter === 'healthy') {
-      const d = (r.disease || '').toLowerCase();
-      const isH = d.includes('healthy') || d.includes('ஆரோக்கிய') || (r.severity || '').toLowerCase() === 'low';
-      if (!isH) return false;
-    }
-    if (severityFilter === 'infected') {
-      const d = (r.disease || '').toLowerCase();
-      const isH = d.includes('healthy') || d.includes('ஆரோக்கிய') || (r.severity || '').toLowerCase() === 'low';
-      if (isH) return false;
-    }
-    return true;
-  });
-
   // Calculate dynamic metrics from records or synthesize benchmark baseline
-  const activeRecords = filteredRecords.length > 0 ? filteredRecords : records;
-  const hasUserRecords = activeRecords.length > 0;
-  const count = hasUserRecords ? activeRecords.length : 128;
+  const hasUserRecords = records.length > 0;
+  const count = hasUserRecords ? records.length : 128;
   const healthyCount = hasUserRecords 
-    ? activeRecords.filter(r => (r.disease || '').toLowerCase().includes('healthy') || (r.disease || '').toLowerCase().includes('ஆரோக்கிய') || (r.severity || '').toLowerCase() === 'low').length
+    ? records.filter(r => (r.disease || '').toLowerCase().includes('healthy') || (r.disease || '').toLowerCase().includes('ஆரோக்கிய') || (r.severity || '').toLowerCase() === 'low').length
     : 108;
   const sickCount = count - healthyCount;
   const vitalityRate = count > 0 ? Math.round((healthyCount / count) * 100) : 84;
   const pathogenRate = count > 0 ? Math.round((sickCount / count) * 100) : 16;
   const treatableCount = hasUserRecords
-    ? activeRecords.filter(r => r.treatable !== false).length
+    ? records.filter(r => r.treatable !== false).length
     : 119;
   const recoveryRate = count > 0 ? Math.round((treatableCount / count) * 100) : 93;
-  const avgAccuracy = hasUserRecords && activeRecords.length > 0
-    ? Math.round(activeRecords.reduce((acc, r) => acc + (r.confidence || 95), 0) / activeRecords.length)
+  const avgAccuracy = hasUserRecords && records.length > 0
+    ? Math.round(records.reduce((acc, r) => acc + (r.confidence || 95), 0) / records.length)
     : 96;
   const severeCount = hasUserRecords
-    ? activeRecords.filter(r => (r.severity || '').toLowerCase() === 'high' || r.treatable === false).length
+    ? records.filter(r => (r.severity || '').toLowerCase() === 'high' || r.treatable === false).length
     : 4;
   const severeRate = count > 0 ? Math.round((severeCount / count) * 100) : 3;
 
@@ -2549,72 +2526,7 @@ function CrmAnalyticsView({ records, navigate, t, lang, onOpenChat }: CrmAnalyti
         </div>
       </div>
 
-      {/* Filter Bar (Crop, Horizon, Status) */}
-      <div className="crm-filter-strip">
-        <div className="filter-pill-group">
-          <span className="filter-label"><Filter size={14} /> {t.filterCrop}:</span>
-          {['all', 'Maize', 'Rice', 'Bajra', 'Potato', 'Tomato'].map((c) => (
-            <button
-              key={c}
-              type="button"
-              className={`filter-pill ${selectedCrop === c ? 'active' : ''}`}
-              onClick={() => setSelectedCrop(c)}
-            >
-              {c === 'all' ? t.allCrops : c}
-            </button>
-          ))}
-        </div>
 
-        <div className="filter-pill-group">
-          <span className="filter-label"><Calendar size={14} /> {t.filterTimeframe}:</span>
-          <button
-            type="button"
-            className={`filter-pill ${timeHorizon === '12m' ? 'active' : ''}`}
-            onClick={() => setTimeHorizon('12m')}
-          >
-            {t.allTime}
-          </button>
-          <button
-            type="button"
-            className={`filter-pill ${timeHorizon === '6m' ? 'active' : ''}`}
-            onClick={() => setTimeHorizon('6m')}
-          >
-            {t.last6Months}
-          </button>
-          <button
-            type="button"
-            className={`filter-pill ${timeHorizon === '30d' ? 'active' : ''}`}
-            onClick={() => setTimeHorizon('30d')}
-          >
-            {t.last30Days}
-          </button>
-        </div>
-
-        <div className="filter-pill-group">
-          <span className="filter-label">{t.filterSeverity}:</span>
-          <button
-            type="button"
-            className={`filter-pill ${severityFilter === 'all' ? 'active' : ''}`}
-            onClick={() => setSeverityFilter('all')}
-          >
-            {t.allSeverities}
-          </button>
-          <button
-            type="button"
-            className={`filter-pill ${severityFilter === 'healthy' ? 'active' : ''}`}
-            onClick={() => setSeverityFilter('healthy')}
-          >
-            {t.healthyOnly}
-          </button>
-          <button
-            type="button"
-            className={`filter-pill ${severityFilter === 'infected' ? 'active' : ''}`}
-            onClick={() => setSeverityFilter('infected')}
-          >
-            {t.infectedOnly}
-          </button>
-        </div>
-      </div>
 
       {/* Main 3-Column / 2-Column Responsive Visual Reasoning Grid */}
       <div className="crm-main-grid">
